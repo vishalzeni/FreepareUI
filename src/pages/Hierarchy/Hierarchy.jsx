@@ -20,13 +20,15 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
-import YouTubeIcon from '@mui/icons-material/YouTube';
+import YouTubeIcon from "@mui/icons-material/YouTube";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { ArrowBack } from "@mui/icons-material";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
-import AdditionalInfoDialog from "./Authentication/AdditionalInfoDialog";
+import AdditionalInfoDialog from "../Authentication/AdditionalInfoDialog";
 import { Snackbar, Alert } from "@mui/material";
+import { COLORS, STYLES } from "./HierarchyStyles";
+import { processData } from "./processData";
 
 const flattenEntities = (entities) => {
   const result = {};
@@ -37,18 +39,6 @@ const flattenEntities = (entities) => {
     }
   });
   return result;
-};
-const processData = (examData) => {
-  // Convert newlines to <br /> tags
-  examData = examData.replace(/\\n/g, "<br />");
-
-  // Convert bold markdown (**) to <b> tag
-  examData = examData.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>");
-
-  // Convert italic markdown (*) to <i> tag
-  examData = examData.replace(/\*(.*?)\*/g, "<i>$1</i>");
-
-  return examData;
 };
 const Hierarchy = () => {
   const [data, setData] = useState([]);
@@ -76,10 +66,13 @@ const Hierarchy = () => {
   const [institutionType, setInstitutionType] = useState(null);
 
   const entityMap = useMemo(() => flattenEntities(data), [data]);
+  const BASE_URL = "http://localhost:5000";
+
   useEffect(() => {
     const fetchData = async (retries = 3) => {
+      setLoading(true);
       try {
-        const response = await axios.get("https://freepare.onrender.com:5000/api/entities");
+        const response = await axios.get(`${BASE_URL}/api/entities`);
         setData(response.data);
         setCurrentLevel(response.data);
       } catch (error) {
@@ -99,7 +92,8 @@ const Hierarchy = () => {
                 errorMessage = "An unexpected error occurred.";
             }
           } else if (error.request) {
-            errorMessage = "Network Error: Please check your internet connection.";
+            errorMessage =
+              "Network Error: Please check your internet connection.";
           }
           setSnackbarMessage(errorMessage);
           setSnackbarSeverity("error");
@@ -165,10 +159,9 @@ const Hierarchy = () => {
   }, [currentEntity]);
 
   const fetchExamData = async (examId, retries = 3) => {
+    setLoading(true);
     try {
-      const response = await axios.get(
-        `https://freepare.onrender.com:5000/api/exams/${examId}`
-      );
+      const response = await axios.get(`${BASE_URL}/api/exams/${examId}`);
       setExamData((prevData) => ({
         ...prevData,
         [examId]: response.data,
@@ -190,26 +183,31 @@ const Hierarchy = () => {
               errorMessage = "An unexpected error occurred.";
           }
         } else if (error.request) {
-          errorMessage = "Network Error: Please check your internet connection.";
+          errorMessage =
+            "Network Error: Please check your internet connection.";
         }
         setSnackbarMessage(errorMessage);
         setSnackbarSeverity("error");
         setSnackbarOpen(true);
       }
+    } finally {
+      setLoading(false);
     }
   };
 
   const fetchCompletedTests = async (retries = 3) => {
+    setLoading(true);
     const jwtToken = localStorage.getItem("jwtToken");
 
     if (!jwtToken) {
       console.error("User is not logged in.");
+      setLoading(false);
       return;
     }
 
     try {
       const response = await axios.get(
-        "https://freepare.onrender.com:5000/api/tests/getCompletedTests",
+        `${BASE_URL}/api/tests/getCompletedTests`,
         {
           headers: {
             Authorization: `Bearer ${jwtToken}`, // Include JWT in headers
@@ -236,7 +234,8 @@ const Hierarchy = () => {
       if (retries > 0) {
         setTimeout(() => fetchCompletedTests(retries - 1), 1000);
       } else {
-        let errorMessage = "Error fetching completed tests. Please try again later.";
+        let errorMessage =
+          "Error fetching completed tests. Please try again later.";
         if (error.response) {
           switch (error.response.status) {
             case 404:
@@ -249,19 +248,24 @@ const Hierarchy = () => {
               errorMessage = "An unexpected error occurred.";
           }
         } else if (error.request) {
-          errorMessage = "Network Error: Please check your internet connection.";
+          errorMessage =
+            "Network Error: Please check your internet connection.";
         }
         setSnackbarMessage(errorMessage);
         setSnackbarSeverity("error");
         setSnackbarOpen(true);
       }
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchCompletedTests();
   }, []);
+
   const fetchUserData = async (retries = 3) => {
+    setLoading(true);
     const jwtToken = localStorage.getItem("jwtToken");
     if (!jwtToken) {
       setLoading(false);
@@ -274,7 +278,7 @@ const Hierarchy = () => {
         setLoading(false);
         return;
       }
-      const response = await fetch(`https://freepare.onrender.com:5000/users/${userId}`, {
+      const response = await fetch(`${BASE_URL}/users/${userId}`, {
         headers: {
           Authorization: `Bearer ${jwtToken}`,
         },
@@ -304,7 +308,8 @@ const Hierarchy = () => {
               errorMessage = "An unexpected error occurred.";
           }
         } else if (error.request) {
-          errorMessage = "Network Error: Please check your internet connection.";
+          errorMessage =
+            "Network Error: Please check your internet connection.";
         }
         setSnackbarMessage(errorMessage);
         setSnackbarSeverity("error");
@@ -314,9 +319,11 @@ const Hierarchy = () => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchUserData();
   }, []);
+
   const isSixDaysPassed = (createdAt) => {
     if (!createdAt) return false;
     const createdDate = new Date(createdAt);
@@ -325,6 +332,7 @@ const Hierarchy = () => {
     const diffDays = diffTime / (1000 * 3600 * 24);
     return diffDays >= 6;
   };
+
   const handleStartTestClick = (examId, testName) => {
     if (
       userCreatedAt &&
@@ -336,13 +344,16 @@ const Hierarchy = () => {
       navigateToTestPage(examId, testName);
     }
   };
+
   const handleAddInfoSubmit = async () => {
+    setLoading(true);
     try {
       const jwtToken = localStorage.getItem("jwtToken");
       if (!jwtToken) {
         setSnackbarMessage("You need to log in to update information.");
         setSnackbarSeverity("error");
         setSnackbarOpen(true);
+        setLoading(false);
         return;
       }
       const decodedToken = jwt_decode(jwtToken);
@@ -352,7 +363,7 @@ const Hierarchy = () => {
         userId: userId,
       };
 
-      const response = await fetch("https://freepare.onrender.com:5000/users/add-info", {
+      const response = await fetch(`${BASE_URL}/users/add-info`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -391,8 +402,11 @@ const Hierarchy = () => {
       }
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
+    } finally {
+      setLoading(false);
     }
   };
+
   const navigateToTestPage = (examId, testName) => {
     const jwtToken = localStorage.getItem("jwtToken");
 
@@ -422,7 +436,7 @@ const Hierarchy = () => {
               setSnackbarOpen(true);
               try {
                 const response = await fetch(
-                  "https://freepare.onrender.com:5000/api/tests/markCompleted",
+                  `${BASE_URL}/api/tests/markCompleted`,
                   {
                     method: "POST",
                     headers: {
@@ -469,6 +483,7 @@ const Hierarchy = () => {
       signupWindow.testName = testName;
     }
   };
+
   useEffect(() => {
     const handleMessage = (event) => {
       if (
@@ -494,7 +509,7 @@ const Hierarchy = () => {
         const decodedToken = jwt_decode(token);
         const userEmail = decodedToken.email;
         const userResponse = await fetch(
-          `https://freepare.onrender.com:5000/users?email=${userEmail}&examId=${examId}`,
+          `${BASE_URL}/users?email=${userEmail}&examId=${examId}`,
           {
             method: "GET",
             headers: {
@@ -508,15 +523,12 @@ const Hierarchy = () => {
           );
         }
         const userData = await userResponse.json();
-        const examResponse = await fetch(
-          `https://freepare.onrender.com:5000/api/exams/${examId}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const examResponse = await fetch(`${BASE_URL}/api/exams/${examId}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (!examResponse.ok) {
           throw new Error(
             `Exam Data Fetch Error! Status: ${examResponse.status}`
@@ -557,6 +569,7 @@ const Hierarchy = () => {
       setLoading(false);
     }
   };
+
   if (loading) {
     return (
       <Box sx={{ textAlign: "center", py: 3 }}>
@@ -570,7 +583,7 @@ const Hierarchy = () => {
   if (!data.length) {
     return (
       <Box sx={{ textAlign: "center", py: 3 }}>
-        <Typography variant="h6" sx={{ marginTop: "15px", color: "grey" }}>
+        <Typography variant="h6" sx={{ marginTop: "15px", color: COLORS.grey }}>
           No data available at the moment. Please try again later.
         </Typography>
       </Box>
@@ -588,19 +601,7 @@ const Hierarchy = () => {
         <IconButton
           onClick={handleBackClick}
           disabled={path.length === 0}
-          sx={{
-            position: "fixed",
-            top: "80px",
-            left: "20px",
-            backgroundColor: "#ffffff",
-            color: "#1976d2",
-            zIndex: 1000,
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-            "&:hover": {
-              backgroundColor: "#f0f0f0",
-              boxShadow: "0 6px 12px rgba(0, 0, 0, 0.3)",
-            },
-          }}
+          sx={STYLES.iconButton}
           aria-label="Go back to the previous level"
         >
           <ArrowBack />
@@ -611,39 +612,46 @@ const Hierarchy = () => {
         <Typography
           variant="h2"
           sx={{
-            fontWeight: "bold",
-            color: "#066C98",
+            fontWeight: "500",
+            background: `linear-gradient(90deg, ${COLORS.primary}, ${COLORS.secondary})`,
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
             mb: 4,
             textAlign: "center",
+            padding: "10px",
+            borderRadius: "8px",
+            fontSize: {
+              xs: "1.6rem",
+              sm: "1.8rem",
+              md: "2.2rem",
+            },
           }}
         >
           {currentEntity.name}
         </Typography>
       )}
 
-      {path.length === 0 && (
-        <Typography
-          variant="h1"
-          align="center"
-          sx={{
-            mb: 3,
-            background: "linear-gradient(90deg, #066C98, #2CACE3)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            padding: "10px",
-            borderRadius: "8px",
-            fontWeight: "500",
-            fontSize: {
-              xs: "1.6rem", // For extra small screens (phones)
-              sm: "1.8rem", // For small screens (tablets)
-              md: "2.2rem", // For medium screens (laptops)
-            },
-          }}
-        >
-          Welcome to <span style={{ fontWeight: "550" }}>FREEPARE </span> – Ace
-          Your Exams for Free!
-        </Typography>
-      )}
+      <Typography
+        variant="h1"
+        align="center"
+        sx={{
+          mb: 3,
+          background: `linear-gradient(90deg, ${COLORS.primary}, ${COLORS.secondary})`,
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          padding: "10px",
+          borderRadius: "8px",
+          fontWeight: "500",
+          fontSize: {
+            xs: "1.6rem", // For extra small screens (phones)
+            sm: "1.8rem", // For small screens (tablets)
+            md: "2.2rem", // For medium screens (laptops)
+          },
+        }}
+      >
+        Welcome to <span style={{ fontWeight: "550" }}>FREEPARE </span> – Ace
+        Your Exams for Free!
+      </Typography>
 
       {showSearch && (
         <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
@@ -652,13 +660,7 @@ const Hierarchy = () => {
             variant="outlined"
             value={searchQuery}
             onChange={handleSearchChange}
-            sx={{
-              width: "350px",
-              backgroundColor: "#fff",
-              borderRadius: "8px",
-              boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-              transition: "all 0.3s ease-in-out",
-            }}
+            sx={STYLES.searchBox}
             InputLabelProps={{
               shrink: true,
             }}
@@ -669,7 +671,10 @@ const Hierarchy = () => {
       )}
 
       {searchQuery && filteredEntities.length === 0 && (
-        <Typography variant="h6" sx={{ color: "grey", textAlign: "center" }}>
+        <Typography
+          variant="h6"
+          sx={{ color: COLORS.grey, textAlign: "center" }}
+        >
           No results found for "{searchQuery}".
         </Typography>
       )}
@@ -684,29 +689,8 @@ const Hierarchy = () => {
                 sx={{ mb: 2, display: "flex", alignItems: "center" }}
               >
                 {/* Serial Number */}
-                <Box
-                  sx={{
-                    mr: 2,
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor: "#066C98", // Box background color
-                    borderRadius: "8px",
-                    width: "70px", // Set width to match the Typography box
-                    height: "70px", // Match card height
-                    boxShadow: 2,
-                  }}
-                >
-                  <Typography
-                    variant="h3"
-                    sx={{
-                      fontWeight: "bold",
-                      color: "#fff",
-                      padding: "4px 8px",
-                      textAlign: "center",
-                      lineHeight: "1.5",
-                    }}
-                  >
+                <Box sx={STYLES.serialNumberBox}>
+                  <Typography variant="h3" sx={STYLES.serialNumberTypography}>
                     {index + 1}.
                   </Typography>
                 </Box>
@@ -723,8 +707,8 @@ const Hierarchy = () => {
                       alignItems: "center",
                       justifyContent: "space-between",
                       backgroundColor: testCompleted[paper.testName]
-                        ? "#4bb543"
-                        : "#fff", // Green background for completed
+                        ? COLORS.green
+                        : COLORS.white, // Green background for completed
 
                       "@media (max-width:600px)": {
                         flexDirection: "column",
@@ -745,8 +729,8 @@ const Hierarchy = () => {
                         sx={{
                           fontWeight: "500",
                           color: testCompleted[paper.testName]
-                            ? "#fff"
-                            : "#000", // Text color changes
+                            ? COLORS.white
+                            : COLORS.black, // Text color changes
                           overflow: "hidden", // Required for ellipsis
                           textOverflow: "ellipsis", // Adds the ellipsis when text overflows
                           whiteSpace: "nowrap", // Prevents wrapping of text
@@ -779,15 +763,7 @@ const Hierarchy = () => {
                           )
                         }
                         disabled={testCompleted[paper.testName]} // Disable button for completed tests
-                        sx={{
-                          width: "auto",
-                          fontSize: { xs: "0.6rem", sm: "0.9rem" },
-                          padding: { xs: "6px 2px", sm: "8px 14px" },
-                          minWidth: { xs: "100px", sm: "120px" },
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
+                        sx={STYLES.button}
                       >
                         Start Test
                       </Button>
@@ -802,27 +778,19 @@ const Hierarchy = () => {
                       >
                         <Box>
                           {paper.videoLink && (
-                           <Button
-                           variant="contained"
-                           component="a"
-                           href={paper.videoLink}
-                           target="_blank"
-                           rel="noopener noreferrer"
-                           startIcon={<YouTubeIcon sx={{ color: "red" }} />}
-                           sx={{
-                             mt: 1,
-                             mb: 1,
-                             fontSize: { xs: "0.7rem", sm: "0.9rem" },
-                             background: "#fff",
-                             color: "#066C98",
-                             "&:hover": {
-                               backgroundColor: "#f0f0f0", // Light grey background on hover
-                             },
-                           }}
-                         >
-                           Solution
-                         </Button>
-                         
+                            <Button
+                              variant="contained"
+                              component="a"
+                              href={paper.videoLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              startIcon={
+                                <YouTubeIcon sx={{ color: COLORS.red }} />
+                              }
+                              sx={STYLES.solutionButton}
+                            >
+                              Solution
+                            </Button>
                           )}
                         </Box>
                         <Button
@@ -835,23 +803,7 @@ const Hierarchy = () => {
                               }}
                             />
                           }
-                          sx={{
-                            bgcolor: "#fff",
-                            color: "#066C98",
-                            borderRadius: 1,
-                            transition: "all 0.3s ease",
-                            padding: { xs: "6px 2px", sm: "8px 14px" },
-                            minWidth: { xs: "110px", sm: "100px" },
-                            "&:hover": {
-                              bgcolor: "#055a7d",
-                              transform: "translateY(-1px)",
-                            },
-                            textTransform: "none", // Prevent uppercase transformation
-                            fontSize: { xs: "0.7rem", sm: "0.8rem" },
-                            fontWeight: 500,
-                            display: "flex",
-                            alignItems: "center",
-                          }}
+                          sx={STYLES.previewButton}
                         >
                           PREVIEW
                         </Button>
@@ -867,21 +819,10 @@ const Hierarchy = () => {
                       }}
                       maxWidth="lg"
                     >
-                      <DialogTitle
-                        sx={{
-                          fontSize: "1.4rem",
-                          fontWeight: 600,
-                          color: "#066C98",
-                        }}
-                      >
+                      <DialogTitle sx={STYLES.dialogTitle}>
                         Submitted Response
                       </DialogTitle>
-                      <DialogContent
-                        sx={{
-                          background:
-                            "linear-gradient(to bottom,rgb(255, 255, 255), #e3f2fd)",
-                        }}
-                      >
+                      <DialogContent sx={STYLES.dialogContent}>
                         {loading ? (
                           <CircularProgress size={24} />
                         ) : (
@@ -893,7 +834,7 @@ const Hierarchy = () => {
                                 justifyContent: "center",
                                 alignItems: "center",
                                 fontWeight: 500,
-                                color: "#066C98",
+                                color: COLORS.primary,
                                 fontSize: "1.2rem",
                                 marginBottom: "1rem",
                               }}
@@ -920,7 +861,7 @@ const Hierarchy = () => {
                                             marginBottom: "1.5rem",
                                             borderRadius: "12px",
                                             border: "1px solid #ddd",
-                                            backgroundColor: "#ffffff",
+                                            backgroundColor: COLORS.white,
                                             boxShadow: 3,
 
                                             transition: "all 0.3s ease",
@@ -930,7 +871,7 @@ const Hierarchy = () => {
                                             variant="h3"
                                             sx={{
                                               fontWeight: "500",
-                                              color: "#000",
+                                              color: COLORS.black,
                                               marginBottom: "1rem",
                                               display: "flex",
                                             }}
@@ -1027,7 +968,8 @@ const Hierarchy = () => {
 
                                                           <Typography
                                                             sx={{
-                                                              color: "#555",
+                                                              color:
+                                                                COLORS.darkGrey,
                                                             }}
                                                           >
                                                             {
@@ -1077,7 +1019,7 @@ const Hierarchy = () => {
                                             <Typography
                                               sx={{
                                                 marginTop: "1rem",
-                                                color: "#5cb85c",
+                                                color: COLORS.success,
                                                 fontStyle: "italic",
                                               }}
                                             >
@@ -1109,7 +1051,7 @@ const Hierarchy = () => {
                                                   <Typography
                                                     sx={{
                                                       fontStyle: "italic",
-                                                      color: "#666",
+                                                      color: COLORS.darkGrey,
                                                       marginBottom: "0.5rem",
                                                     }}
                                                   >
@@ -1144,7 +1086,7 @@ const Hierarchy = () => {
                             ) : (
                               <Typography
                                 variant="body2"
-                                sx={{ color: "#555" }}
+                                sx={{ color: COLORS.darkGrey }}
                               >
                                 No questions available for this exam.
                               </Typography>
@@ -1187,50 +1129,46 @@ const Hierarchy = () => {
           {filteredEntities.map((entity) => (
             <Grid item key={entity.id} xs={12} sm={6} md={6} lg={4}>
               <Card
-                sx={{
-                  backgroundColor: "#ffffff",
-                  padding: "20px",
-                  borderRadius: "16px",
-                  boxShadow: "0 6px 15px rgba(0, 0, 0, 0.1)",
-                  transition: "transform 0.3s ease, box-shadow 0.3s ease",
-                  minHeight: "200px",
-                  overflow: "hidden", // Extra content chhupane ke liye
-                  "&:hover": {
-                    boxShadow: "0 8px 20px rgba(0, 0, 0, 0.15)",
-                  },
-                  cursor: "pointer",
-                }}
+                sx={STYLES.card}
                 onClick={() => navigateTo(entity)}
                 aria-label={`Navigate to ${entity.name}`}
               >
                 <Typography
                   variant="h3"
-                  sx={{
-                    fontWeight: "bold",
-                    color: "#066C98",
-                    cursor: "pointer",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
+                  sx={STYLES.typography}
                   onClick={() => navigateTo(entity)}
                 >
                   {entity.name}
                 </Typography>
-
-                {/* Only show points under the Exam and subjects */}
                 {!(currentEntity && currentEntity.type === "subject") &&
+                  !(
+                    currentEntity &&
+                    currentEntity.children?.some(
+                      (child) => child.type === "topic"
+                    )
+                  ) &&
                   entity.children && (
                     <Box sx={{ mt: 2 }}>
                       {entity.children.slice(0, 4).map((child) => (
                         <Typography
                           key={child.id}
                           variant="h4"
-                          sx={{ color: "#555", mb: 1, fontWeight: "500" }}
+                          sx={{
+                            color: COLORS.darkGrey,
+                            mb: 1,
+                            fontWeight: "500",
+                          }}
                         >
                           • {child.name}
                         </Typography>
                       ))}
+                    </Box>
+                  )}
+
+                {/* Only show points under the Exam and subjects */}
+                {!(currentEntity && currentEntity.type === "subject") &&
+                  entity.children && (
+                    <Box sx={{ mt: 2 }}>
                       {!(currentEntity && currentEntity.type === "exam") && (
                         <Box
                           sx={{
@@ -1241,22 +1179,7 @@ const Hierarchy = () => {
                           <Typography
                             variant="button"
                             component="span"
-                            sx={{
-                              textTransform: "none",
-                              fontWeight: "500",
-                              borderRadius: "8px",
-                              textAlign: "right",
-                              color: "#066C98",
-                              cursor: "pointer",
-                              padding: "6px 16px",
-                              boxShadow: 2,
-                              border: "1px solid #066C98",
-                              "&:hover": {
-                                backgroundColor: "#066C98", // Revert background color on hover
-                                color: "#fff", // Revert text color on hover
-                                transform: "scale(1.05)", // Scale slightly on hover
-                              },
-                            }}
+                            sx={STYLES.viewMoreTypography}
                             onClick={() => navigateTo(entity)}
                           >
                             ...View More
@@ -1272,7 +1195,7 @@ const Hierarchy = () => {
                             <Typography
                               variant="body1"
                               sx={{
-                                color: "#333",
+                                color: COLORS.black,
                                 fontWeight: 600,
                                 whiteSpace: "nowrap", // Prevent text from wrapping to the next line
                                 overflow: "hidden", // Hide overflowed text
@@ -1310,7 +1233,7 @@ const Hierarchy = () => {
                               fontWeight: "600",
                               borderRadius: "8px",
                               textAlign: "right",
-                              color: "#066C98",
+                              color: COLORS.primary,
                               cursor: "pointer",
                             }}
                             onClick={() => navigateTo(entity)}
@@ -1337,7 +1260,7 @@ const Hierarchy = () => {
                               >
                                 <Typography
                                   variant="h4"
-                                  sx={{ color: "#000", fontWeight: "bold" }}
+                                  sx={STYLES.completedTestsTypography}
                                 >
                                   {/* Total completed tests */}
                                   {entity.children
@@ -1357,7 +1280,7 @@ const Hierarchy = () => {
                                 <Typography
                                   variant="h4"
                                   sx={{
-                                    color: "#000",
+                                    color: COLORS.black,
                                     fontWeight: "bold",
                                     mx: 1,
                                   }} // margin between the text
@@ -1366,7 +1289,7 @@ const Hierarchy = () => {
                                 </Typography>
                                 <Typography
                                   variant="h4"
-                                  sx={{ color: "#000", fontWeight: "bold" }}
+                                  sx={STYLES.totalTestsTypography}
                                 >
                                   {/* Total tests */}
                                   {entity.children
@@ -1385,7 +1308,7 @@ const Hierarchy = () => {
 
                               <Typography
                                 variant="h5"
-                                sx={{ color: "#000", fontWeight: "bold" }}
+                                sx={STYLES.percentageTypography}
                               >
                                 {/* Calculate percentage */}
                                 {entity.children
@@ -1443,14 +1366,7 @@ const Hierarchy = () => {
                                     100
                                   : 0
                               }
-                              sx={{
-                                height: 10,
-                                borderRadius: 5,
-                                backgroundColor: "#f0f0f0", // Placeholder bar background
-                                "& .MuiLinearProgress-bar": {
-                                  backgroundColor: "#066C98", // Bar color
-                                },
-                              }}
+                              sx={STYLES.linearProgress}
                             />
                           </Box>
                         )}
@@ -1460,19 +1376,13 @@ const Hierarchy = () => {
 
                 {/* description for topics */}
                 {currentEntity &&
-                  currentEntity.type === "subject" &&
+                  (currentEntity.type === "subject" ||
+                    currentEntity.type === "exam") &&
                   entity.description && (
                     <Box sx={{ mt: 2 }}>
                       <Typography
                         variant="body1"
-                        sx={{
-                          color: "#333",
-                          display: "-webkit-box",
-                          WebkitBoxOrient: "vertical",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          WebkitLineClamp: 3,
-                        }}
+                        sx={STYLES.descriptionTypography}
                       >
                         {entity.description}
                       </Typography>
@@ -1496,7 +1406,7 @@ const Hierarchy = () => {
                       >
                         <Typography
                           variant="h4"
-                          sx={{ color: "#000", fontWeight: "bold" }}
+                          sx={STYLES.completedTestsTypography}
                         >
                           {entity.children
                             ? entity.children.filter(
@@ -1508,16 +1418,13 @@ const Hierarchy = () => {
                         out of{" "}
                         <Typography
                           variant="h4"
-                          sx={{ color: "#000", fontWeight: "bold" }}
+                          sx={STYLES.totalTestsTypography}
                         >
                           {entity.children ? entity.children.length : "0"} Tests
                         </Typography>
                       </Box>
 
-                      <Typography
-                        variant="h5"
-                        sx={{ color: "#000", fontWeight: "bold" }}
-                      >
+                      <Typography variant="h5" sx={STYLES.percentageTypography}>
                         {/* Percentage */}
                         {entity.children
                           ? `${Math.round(
@@ -1544,14 +1451,7 @@ const Hierarchy = () => {
                             100
                           : 0
                       }
-                      sx={{
-                        height: 10,
-                        borderRadius: 5,
-                        backgroundColor: "#f0f0f0", // Placeholder bar background
-                        "& .MuiLinearProgress-bar": {
-                          backgroundColor: entity.children ? "#066C98" : "#ccc", // Change bar color based on data
-                        },
-                      }}
+                      sx={STYLES.linearProgress}
                     />
                   </Box>
                 )}

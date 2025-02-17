@@ -26,7 +26,7 @@ const useFetchExamData = (examId) => {
   useEffect(() => {
     if (examId) {
       setLoading(true);
-      fetch(`https://freepare.onrender.com:5000/api/exams`)
+      fetch(`http://localhost:5000/api/exams`)
         .then((response) => {
           if (!response.ok) {
             throw new Error(`Server Error: ${response.statusText}`);
@@ -66,8 +66,12 @@ const processData = (examData) => {
   // Convert italic markdown (*) to <i> tag
   examData = examData.replace(/\*(.*?)\*/g, "<i>$1</i>");
 
+  // Convert tilde markdown (~text~) to <u> tag for underline
+  examData = examData.replace(/~(.*?)~/g, "<u>$1</u>");
+
   return examData;
 };
+
 const TestPage = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -251,7 +255,7 @@ const TestPage = () => {
                         width: { xs: "100%", sm: "auto" }, // Ensures the header is full width on small screens
                       }}
                     >
-                      <strong>Test Results</strong>
+                      <strong>Test Result</strong>
                     </Typography>
 
                     {/* Results Summary (Inline layout with space between) */}

@@ -36,6 +36,9 @@ const processData = (examData) => {
   // Convert italic markdown (*) to <i> tag
   examData = examData.replace(/\*(.*?)\*/g, "<i>$1</i>");
 
+    // Convert tilde markdown (~text~) to <u> tag for underline
+    examData = examData.replace(/~(.*?)~/g, "<u>$1</u>");
+
   return examData;
 };
 export default function Upload() {
@@ -188,7 +191,7 @@ export default function Upload() {
       // Proceed with the upload only if exam name is valid
       setIsUploading(true);
       try {
-        const response = await fetch("https://freepare.onrender.com:5000/api/exam", {
+        const response = await fetch("http://localhost:5000/api/exam", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

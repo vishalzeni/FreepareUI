@@ -1,77 +1,91 @@
 import React from 'react';
-import { Typography, Card, Container, Box } from '@mui/material';
+import { Typography, Card, Container, Box, useMediaQuery } from '@mui/material';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { keyframes } from '@emotion/react';
 import {
-  EmojiPeople, // User Experience
-  Verified, // Quality Assurance
-  School, // Expert Approach
-  MonetizationOn, // Free of Cost
-  Timer, // Flexible Testing Format
-  OndemandVideo, // Video Solutions
-  Public, // Convenience and Accessibility
+  EmojiPeople,
+  Verified,
+  School,
+  MonetizationOn,
+  Timer,
+  OndemandVideo,
+  Public,
 } from '@mui/icons-material';
+import ArrowBackIos from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIos from '@mui/icons-material/ArrowForwardIos';
 
-// Keyframes for subtle animations
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 `;
 
-// Modern color palette
 const colors = {
-  primary: '#066C98', // Main theme color
-  secondary: '#ff4081', // Accent color
-  background: '#f5f5f5', // Light background
-  text: '#333', // Dark text
-  icon: '#066C98', // Icon color
+  primary: '#066C98',
+  secondary: '#ff4081',
+  background: '#f5f5f5',
+  text: '#333',
+  icon: '#066C98',
 };
 
-// Custom Previous Arrow Component
 const CustomPrevArrow = (props) => {
-  const { className, style, onClick } = props;
+  const { onClick, isHidden } = props;
+  if (isHidden) return null;
   return (
-    <div
-      className={className}
-      style={{
-        ...style,
-        display: 'block',
-        background: '#066C98', // Darker color
-        borderRadius: '50%',
-        width: '20px', // Bigger size
-        height: '20px', // Bigger size
-        zIndex: 1,
-        right: '-30px', // Adjust position
-      }}
+    <Box
       onClick={onClick}
-    />
+      sx={{
+        position: 'absolute',
+        left: '-40px',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        zIndex: 1,
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '35px',
+        height: '35px',
+        borderRadius: '50%',
+        color: colors.primary,
+      }}
+    >
+      <ArrowBackIos />
+    </Box>
   );
 };
 
-// Custom Next Arrow Component
 const CustomNextArrow = (props) => {
-  const { className, style, onClick } = props;
+  const { onClick, isHidden } = props;
+  if (isHidden) return null;
   return (
-    <div
-      className={className}
-      style={{
-        ...style,
-        display: 'block',
-        background: '#066C98', // Darker color
-        borderRadius: '50%',
-        width: '20px', // Bigger size
-        height: '20px', // Bigger size
-        zIndex: 1,
-        right: '-30px', // Adjust position
-      }}
+    <Box
       onClick={onClick}
-    />
+      sx={{
+        position: 'absolute',
+        right: '-40px',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        zIndex: 1,
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '35px',
+        height: '35px',
+        borderRadius: '50%',
+        color: colors.primary,
+      }}
+    >
+      <ArrowForwardIos fontSize="small" />
+    </Box>
   );
 };
 
 const WhyFreepare = () => {
+  const isMobile = useMediaQuery('(max-width:600px)');
+
   const settings = {
     dots: true,
     infinite: true,
@@ -80,8 +94,8 @@ const WhyFreepare = () => {
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 3000,
-    prevArrow: <CustomPrevArrow />, // Use custom previous arrow
-    nextArrow: <CustomNextArrow />, // Use custom next arrow
+    prevArrow: <CustomPrevArrow isHidden={isMobile} />,
+    nextArrow: <CustomNextArrow isHidden={isMobile} />,
     responsive: [
       {
         breakpoint: 1024,
@@ -99,48 +113,13 @@ const WhyFreepare = () => {
   };
 
   const cardData = [
-    {
-      icon: <EmojiPeople sx={{ fontSize: 48, color: colors.icon }} />,
-      title: 'User Experience',
-      description:
-        'FREEPARE provides a seamless and intuitive user experience, enabling students to quickly access the tests they need. Our platform is designed to be straightforward and user-friendly, ensuring that even those with minimal technical knowledge can navigate with ease.',
-    },
-    {
-      icon: <Verified sx={{ fontSize: 48, color: colors.icon }} />,
-      title: 'Quality Assurance',
-      description:
-        'At FREEPARE, we ensure the highest level of quality for all our test materials. Each test is meticulously curated and reviewed by subject-matter experts to guarantee accuracy and relevance.',
-    },
-    {
-      icon: <School sx={{ fontSize: 48, color: colors.icon }} />,
-      title: 'Expert Approach',
-      description:
-        'FREEPARE’s tests are not only about practicing questions but also about understanding the core concepts. Each question comes with a detailed solution that explains the reasoning and methodology behind the correct answer.',
-    },
-    {
-      icon: <MonetizationOn sx={{ fontSize: 48, color: colors.icon }} />,
-      title: 'Free of Cost',
-      description:
-        'One of the major benefits of FREEPARE is that all of our tests and resources are available completely free of charge. We believe in making education accessible to all, regardless of financial background.',
-    },
-    {
-      icon: <Timer sx={{ fontSize: 48, color: colors.icon }} />,
-      title: 'Flexible Testing Format',
-      description:
-        'FREEPARE offers an incredibly flexible testing format that allows students to take tests at their own pace. Each test consists of five questions with no time constraints, giving you the freedom to thoroughly analyze and understand each question.',
-    },
-    {
-      icon: <OndemandVideo sx={{ fontSize: 48, color: colors.icon }} />,
-      title: 'Video Solutions',
-      description:
-        'Understanding complex concepts is made easier with FREEPARE’s video solutions. Every test is accompanied by a video explanation, where experts break down the questions and provide in-depth explanations of the solutions.',
-    },
-    {
-      icon: <Public sx={{ fontSize: 48, color: colors.icon }} />,
-      title: 'Accessibility',
-      description:
-        'The convenience of FREEPARE lies in its accessibility. Students can access the tests anytime and anywhere, as long as they have an internet connection. This ensures that learning can happen on the go.',
-    },
+    { icon: <EmojiPeople sx={{ fontSize: 48, color: colors.icon }} />, title: 'User Experience', description: 'FREEPARE provides a seamless and intuitive user experience...' },
+    { icon: <Verified sx={{ fontSize: 48, color: colors.icon }} />, title: 'Quality Assurance', description: 'At FREEPARE, we ensure the highest level of quality for all our test materials...' },
+    { icon: <School sx={{ fontSize: 48, color: colors.icon }} />, title: 'Expert Approach', description: 'FREEPARE’s tests are not only about practicing questions but also about understanding the core concepts...' },
+    { icon: <MonetizationOn sx={{ fontSize: 48, color: colors.icon }} />, title: 'Free of Cost', description: 'One of the major benefits of FREEPARE is that all of our tests and resources are available completely free of charge...' },
+    { icon: <Timer sx={{ fontSize: 48, color: colors.icon }} />, title: 'Flexible Testing Format', description: 'FREEPARE offers an incredibly flexible testing format that allows students to take tests at their own pace...' },
+    { icon: <OndemandVideo sx={{ fontSize: 48, color: colors.icon }} />, title: 'Video Solutions', description: 'Understanding complex concepts is made easier with FREEPARE’s video solutions...' },
+    { icon: <Public sx={{ fontSize: 48, color: colors.icon }} />, title: 'Accessibility', description: 'The convenience of FREEPARE lies in its accessibility. Students can access the tests anytime and anywhere...' },
   ];
 
   return (
@@ -175,7 +154,7 @@ const WhyFreepare = () => {
                   transform: 'translateY(-10px)',
                   boxShadow: 6,
                 },
-                height: '300px', // Fixed card height
+                height: '300px',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
@@ -198,7 +177,7 @@ const WhyFreepare = () => {
                       color: colors.text,
                       lineHeight: 1.6,
                       display: '-webkit-box',
-                      WebkitLineClamp: 5, // Limit to 5 lines
+                      WebkitLineClamp: 5,
                       WebkitBoxOrient: 'vertical',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',

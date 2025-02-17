@@ -1,5 +1,5 @@
 import React from "react";
-import Hierarchy from "./Hierarchy";
+import Hierarchy from "./Hierarchy/Hierarchy";
 import { Box } from "@mui/material";
 import Navbar from "../components/Navbar";
 import SessionExpireDialog from "../SessionExpireCheck/SessionExpireDialog";

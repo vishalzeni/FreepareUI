@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import {
   Box,
   Button,
@@ -8,59 +8,139 @@ import {
   Grid,
   Paper,
   Link,
+  CircularProgress,
+  Snackbar,
+  IconButton,
+  InputAdornment,
 } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
+import PasswordStrengthBar from "react-password-strength-bar";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const AuthForm = ({ type }) => {
-  // State for user input fields
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [phone, setPhone] = useState("");  // Added phone state
+  const [phone, setPhone] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [phoneError, setPhoneError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState("");
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const firstInputRef = useRef(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleSubmit = async (e) => {
+  useEffect(() => {
+    if (firstInputRef.current) {
+      firstInputRef.current.focus();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (password && confirmPassword) {
+      setPasswordError(password === confirmPassword ? "" : "Passwords do not match");
+    }
+  }, [password, confirmPassword]);
+
+  const validateEmail = useCallback((email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(String(email).toLowerCase());
+  }, []);
+
+  const validatePhone = useCallback((phone) => {
+    const re = /^\d{10}$/;
+    return re.test(String(phone));
+  }, []);
+
+  const formatPhoneNumber = (phone) => {
+    const cleaned = ('' + phone).replace(/\D/g, '');
+    const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+    if (match) {
+      return `(${match[1]}) ${match[2]}-${match[3]}`;
+    }
+    return phone;
+  };
+
+  const sanitizePhoneNumber = (phone) => {
+    return phone.replace(/\D/g, '');
+  };
+
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
+    setError("");
+    setEmailError("");
+    setPhoneError("");
+    setPasswordError("");
 
-    if (type === "signup" && password !== confirmPassword) {
-      setError("Passwords do not match");
+    if (!validateEmail(email)) {
+      setEmailError("Invalid email format");
       return;
     }
+
+    if (type === "signup" && !validatePhone(phone)) {
+      setPhoneError("Invalid phone number format");
+      return;
+    }
+
+    if (type === "signup" && password !== confirmPassword) {
+      setPasswordError("Passwords do not match");
+      return;
+    }
+
+    setIsLoading(true);
 
     const payload = {
       email,
       password,
-      phone,
-      ...(type === "signup" && { firstName, lastName }),
+      ...(type === "signup" && { phone: sanitizePhoneNumber(phone), firstName, lastName }),
     };
 
     try {
-      const response = await fetch(`https://freepare.onrender.com:5000/${type}`, {
+      const response = await fetch(`http://localhost:5000/${type}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
-      if (!response.ok) throw new Error("Something went wrong");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Something went wrong");
+      }
 
       const data = await response.json();
       if (data.success) {
         localStorage.setItem("jwtToken", data.token);
 
-        // Notify the parent tab
         if (window.opener) {
           window.opener.postMessage("AUTH_SUCCESS", window.location.origin);
         }
 
-        // Close the child tab
         window.close();
+      } else {
+        setError(data.message || "An error occurred. Please try again.");
       }
     } catch (err) {
-      setError("An error occurred. Please try again.");
+      setError(err.message || "An error occurred. Please try again.");
+    } finally {
+      setIsLoading(false);
+      setSnackbarMessage(type === "signup" ? "Account created successfully" : "Welcome back!");
+      setSnackbarOpen(true);
+      if (type === "signup") {
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+        setFirstName("");
+        setLastName("");
+        setPhone("");
+      }
     }
-  };
+  }, [email, password, confirmPassword, firstName, lastName, phone, type, validateEmail, validatePhone]);
 
   return (
     <Grid
@@ -74,7 +154,6 @@ const AuthForm = ({ type }) => {
         overflow: "hidden",
       }}
     >
-      {/* Background Grid */}
       <Box
         sx={{
           position: "absolute",
@@ -100,14 +179,14 @@ const AuthForm = ({ type }) => {
           ))}
       </Box>
 
-      {/* Left-side Image */}
       <Grid
         item
         xs={false}
         sm={4}
         md={5}
         sx={{
-          backgroundImage: "url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0vwYhdNz0-wTJrF7QLWZJNNaSMns-SIvy3w&s')",
+          backgroundImage:
+            "url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0vwYhdNz0-wTJrF7QLWZJNNaSMns-SIvy3w&s')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           height: "70vh",
@@ -115,7 +194,6 @@ const AuthForm = ({ type }) => {
         }}
       ></Grid>
 
-      {/* Auth Form */}
       <Grid
         item
         xs={11}
@@ -123,7 +201,7 @@ const AuthForm = ({ type }) => {
         md={5}
         sx={{
           zIndex: 1,
-          height: "auto", // Allow height to adjust based on content
+          height: "auto",
           padding: 0,
         }}
       >
@@ -156,12 +234,11 @@ const AuthForm = ({ type }) => {
                 : "Log in to your Freepare account and continue your journey."}
             </Typography>
             {error && (
-              <Alert severity="error" sx={{ marginBottom: 2 }}>
+              <Alert severity="error" sx={{ marginBottom: 2 }} aria-live="assertive">
                 {error}
               </Alert>
             )}
 
-            {/* First Name and Last Name Fields for Signup */}
             {type === "signup" && (
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
@@ -174,6 +251,8 @@ const AuthForm = ({ type }) => {
                     required
                     margin="normal"
                     variant="outlined"
+                    inputRef={firstInputRef}
+                    aria-label="First Name"
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -186,12 +265,12 @@ const AuthForm = ({ type }) => {
                     required
                     margin="normal"
                     variant="outlined"
+                    aria-label="Last Name"
                   />
                 </Grid>
               </Grid>
             )}
 
-            {/* Email, Password, and Confirm Password Fields */}
             {type === "signup" ? (
               <>
                 <Grid container spacing={2}>
@@ -201,10 +280,16 @@ const AuthForm = ({ type }) => {
                       label="Phone Number"
                       type="text"
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
+                      onChange={(e) => {
+                        setPhone(formatPhoneNumber(e.target.value));
+                        setPhoneError(validatePhone(e.target.value) ? "" : "Invalid phone number format");
+                      }}
                       required
                       margin="normal"
                       variant="outlined"
+                      error={!!phoneError}
+                      helperText={phoneError}
+                      aria-label="Phone Number"
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
@@ -213,10 +298,16 @@ const AuthForm = ({ type }) => {
                       label="Email Address"
                       type="email"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        setEmailError(validateEmail(e.target.value) ? "" : "Invalid email format");
+                      }}
                       required
                       margin="normal"
                       variant="outlined"
+                      error={!!emailError}
+                      helperText={emailError}
+                      aria-label="Email Address"
                     />
                   </Grid>
                 </Grid>
@@ -225,50 +316,107 @@ const AuthForm = ({ type }) => {
                     <TextField
                       fullWidth
                       label="Password"
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
                       margin="normal"
                       variant="outlined"
+                      error={!!passwordError}
+                      helperText={passwordError}
+                      aria-label="Password"
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="toggle password visibility"
+                              onClick={() => setShowPassword(!showPassword)}
+                              edge="end"
+                            >
+                              {showPassword ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
                     />
+                    <PasswordStrengthBar password={password} onChangeScore={(score) => {
+                      const strength = ["Weak", "Fair", "Good", "Strong", "Very Strong"];
+                      setPasswordStrength(strength[score]);
+                    }} />
+                    <Typography variant="body2" color="textSecondary">
+                      Password Strength: {passwordStrength}
+                    </Typography>
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <TextField
                       fullWidth
                       label="Confirm Password"
-                      type="password"
+                      type={showConfirmPassword ? "text" : "password"}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       required
                       margin="normal"
                       variant="outlined"
+                      aria-label="Confirm Password"
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="toggle confirm password visibility"
+                              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                              edge="end"
+                            >
+                              {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
                     />
                   </Grid>
                 </Grid>
               </>
             ) : (
               <>
-                {/* Only Email and Password Fields for Login */}
                 <TextField
                   fullWidth
                   label="Email Address"
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    setEmailError(validateEmail(e.target.value) ? "" : "Invalid email format");
+                  }}
                   required
                   margin="normal"
                   variant="outlined"
+                  inputRef={firstInputRef}
+                  error={!!emailError}
+                  helperText={emailError}
+                  aria-label="Email Address"
                 />
                 <TextField
                   fullWidth
                   label="Password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   margin="normal"
                   variant="outlined"
+                  aria-label="Password"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={() => setShowPassword(!showPassword)}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
                 />
               </>
             )}
@@ -284,11 +432,17 @@ const AuthForm = ({ type }) => {
                 fontSize: "1rem",
                 textTransform: "none",
               }}
+              aria-busy={isLoading}
             >
-              {type === "signup" ? "Sign Up" : "Log In"}
+              {isLoading ? (
+                <CircularProgress size={24} />
+              ) : type === "signup" ? (
+                "Sign Up"
+              ) : (
+                "Log In"
+              )}
             </Button>
 
-            {/* Link to Sign Up Page when on Login */}
             {type === "login" && (
               <Typography variant="body1" align="center" sx={{ mt: 2 }}>
                 Don't have an account?{" "}
@@ -304,7 +458,6 @@ const AuthForm = ({ type }) => {
             )}
           </Box>
 
-          {/* Link to Login Page when on Sign Up */}
           {type === "signup" && (
             <Typography variant="body1" align="center" sx={{ mt: 2 }}>
               Already have an account?{" "}
@@ -320,6 +473,17 @@ const AuthForm = ({ type }) => {
           )}
         </Paper>
       </Grid>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarOpen(false)}
+        message={snackbarMessage}
+        ContentProps={{
+          sx: {
+            backgroundColor: snackbarMessage.includes("successfully") ? "green" : "red",
+          },
+        }}
+      />
     </Grid>
   );
 };

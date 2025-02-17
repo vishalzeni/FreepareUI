@@ -118,29 +118,34 @@ const Navbar = () => {
           {/* Conditionally render Avatar or Auth Button based on token status */}
           {location.pathname !== "/admin" && (
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              <IconButton
+              <Button
                 color="inherit"
                 onClick={handleDialogOpen} // Open dialog on click
                 sx={{
+                  display: "flex",
+                  alignItems: "center",
                   color: theme.palette.primary.main,
                   fontWeight: "bold",
-                  fontSize: "1.5rem",
+                  fontSize: "1rem",
                 }}
               >
                 {isTokenExpired ? (
-                  <AccountCircle />
+                  <AccountCircle sx={{ fontSize: 30, marginRight: 1 }} />
                 ) : userImage ? (
-                  <Avatar src={userImage} alt="User Avatar" />
+                  <Avatar src={userImage} alt="User Avatar" sx={{ width: 30, height: 30, marginRight: 1 }} />
                 ) : (
-                  <AccountCircle />
+                  <AccountCircle sx={{ fontSize: 30, marginRight: 1 }} />
                 )}
                 <Typography
-                  variant="h4"
-                  style={{ color: theme.palette.primary.main }}
+                  variant="h6"
+                  sx={{
+                    color: theme.palette.primary.main,
+                    fontWeight: "bold",
+                  }}
                 >
-                  {userName}
+                  {userName || "User"} {/* Default name if no userName available */}
                 </Typography>
-              </IconButton>
+              </Button>
 
               {/* Conditionally render login/signup button based on token expiry */}
               {isTokenExpired && (

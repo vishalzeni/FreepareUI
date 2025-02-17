@@ -1,4 +1,10 @@
-import { useEffect, useState } from "react";
+import React, {
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+  useRef,
+} from "react";
 import {
   Box,
   Typography,
@@ -19,6 +25,8 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Alert,
+  Tooltip,
 } from "@mui/material";
 import {
   Visibility as VisibilityIcon,
@@ -29,168 +37,281 @@ import {
 } from "@mui/icons-material"; // Import icons
 import axios from "axios";
 import { debounce } from "lodash";
+import PropTypes from "prop-types";
+
+const BASE_URL = "http://localhost:5000/api";
 
 const ExamsList = () => {
-  const [exams, setExams] = useState([]);
-  const [filteredExams, setFilteredExams] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortOrder, setSortOrder] = useState("A-Z");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [renameDialogOpen, setRenameDialogOpen] = useState(false);
-  const [currentExam, setCurrentExam] = useState(null);
-  const [newExamName, setNewExamName] = useState("");
-  const [previewExam, setPreviewExam] = useState(null);
-  const [previewDialogOpen, setPreviewDialogOpen] = useState(false);
+  const [state, setState] = useState({
+    exams: [],
+    filteredExams: [],
+    loading: true,
+    error: null,
+    searchQuery: "",
+    sortOrder: "A-Z",
+    currentPage: 1,
+    openSnackbar: false,
+    snackbarMessage: "",
+    snackbarSeverity: "error",
+    renameDialogOpen: false,
+    currentExam: null,
+    newExamName: "",
+    previewExam: null,
+    previewDialogOpen: false,
+    inputValue: "",
+    deleteDialogOpen: false,
+    examToDelete: null,
+    mutationLoading: false,
+  });
 
   const examsPerPage = 12; // Number of cards per page
 
+  const fetchExams = async (retries = 3) => {
+    try {
+      const cancelToken = axios.CancelToken.source();
+      const response = await axios.get(`${BASE_URL}/exams`, {
+        cancelToken: cancelToken.token,
+      });
+      setState((prevState) => ({
+        ...prevState,
+        exams: response.data,
+        loading: false,
+      }));
+    } catch (error) {
+      if (axios.isCancel(error)) return;
+      if (retries > 0) {
+        setTimeout(() => fetchExams(retries - 1), 1000);
+      } else {
+        let errorMessage = "Failed to load exams!";
+        if (error.response) {
+          switch (error.response.status) {
+            case 404:
+              errorMessage = "Exams data not found.";
+              break;
+            case 500:
+              errorMessage = "Server error. Please try again later.";
+              break;
+            default:
+              errorMessage = "An unexpected error occurred.";
+          }
+        }
+        setState((prevState) => ({
+          ...prevState,
+          error: errorMessage,
+          snackbarMessage: errorMessage,
+          openSnackbar: true,
+          loading: false,
+        }));
+      }
+    }
+  };
+
   // Fetch exams data with retry logic
   useEffect(() => {
-    const fetchExams = async (retries = 3) => {
-      try {
-        const response = await axios.get("https://freepare.onrender.com:5000/api/exams");
-        setExams(response.data);
-        setFilteredExams(response.data);
-        setLoading(false);
-      } catch (error) {
-        if (retries > 0) {
-          setTimeout(() => fetchExams(retries - 1), 1000);
-        } else {
-          let errorMessage = "Failed to load exams!";
-          if (error.response) {
-            switch (error.response.status) {
-              case 404:
-                errorMessage = "Exams data not found.";
-                break;
-              case 500:
-                errorMessage = "Server error. Please try again later.";
-                break;
-              default:
-                errorMessage = "An unexpected error occurred.";
-            }
-          }
-          setError(errorMessage);
-          setSnackbarMessage(errorMessage);
-          setOpenSnackbar(true);
-          setLoading(false);
-        }
-      }
-    };
     fetchExams();
   }, []);
 
-  const debouncedSearch = debounce((query) => {
-    const filtered = exams.filter(
-      (exam) =>
-        exam.examName.toLowerCase().includes(query) ||
-        exam.examId.toLowerCase().includes(query)
-    );
-    setFilteredExams(filtered);
-    setCurrentPage(1); // Reset to first page on new search
-  }, 500);
+  useEffect(() => {
+    setState((prevState) => {
+      const searchLower = prevState.searchQuery.toLowerCase(); // Ensure case-insensitivity
+      return {
+        ...prevState,
+        filteredExams: prevState.exams.filter(
+          (exam) =>
+            (exam.examName &&
+              exam.examName.toLowerCase().includes(searchLower)) ||
+            (exam.examId && exam.examId.toLowerCase().includes(searchLower))
+        ),
+      };
+    });
+  }, [state.searchQuery, state.exams]);
 
-  const handleSearch = (e) => {
-    const query = e.target.value.toLowerCase();
-    setSearchQuery(query);
-    debouncedSearch(query);
+  const debouncedSearch = useCallback(
+    debounce((query) => {
+      setState((prevState) => ({ ...prevState, searchQuery: query }));
+    }, 500),
+    []
+  );
+
+  useEffect(() => {
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [debouncedSearch]);
+
+  const handleSearch = (value) => {
+    const trimmedQuery = value.trim().toLowerCase();
+    setState((prevState) => ({
+      ...prevState,
+      inputValue: value,
+      currentPage: 1,
+    }));
+    debouncedSearch(trimmedQuery);
   };
 
   const handleSortChange = (e) => {
-    setSortOrder(e.target.value);
+    setState((prevState) => ({
+      ...prevState,
+      sortOrder: e.target.value,
+      currentPage: 1,
+    }));
   };
 
-  const sortedExams = filteredExams.sort((a, b) => {
-    if (sortOrder === "A-Z") {
-      return a.examName.localeCompare(b.examName);
-    } else if (sortOrder === "Z-A") {
-      return b.examName.localeCompare(a.examName);
-    }
-    return 0;
-  });
+  const sortedExams = useMemo(() => {
+    return [...state.filteredExams].sort((a, b) => {
+      if (state.sortOrder === "A-Z") {
+        return a.examName.localeCompare(b.examName);
+      } else if (state.sortOrder === "Z-A") {
+        return b.examName.localeCompare(a.examName);
+      }
+      return 0;
+    });
+  }, [state.filteredExams, state.sortOrder]);
 
-  const indexOfLastExam = currentPage * examsPerPage;
+  const indexOfLastExam = state.currentPage * examsPerPage;
   const indexOfFirstExam = indexOfLastExam - examsPerPage;
   const currentExams = sortedExams.slice(indexOfFirstExam, indexOfLastExam);
 
   const handlePageChange = (event, value) => {
-    setCurrentPage(value);
+    setState((prevState) => ({ ...prevState, currentPage: value }));
   };
 
   const handleClearSearch = () => {
-    setSearchQuery("");
-    setFilteredExams(exams);
+    setState((prevState) => ({
+      ...prevState,
+      inputValue: "",
+      searchQuery: "",
+      currentPage: 1,
+    }));
   };
 
   const handleRenameClick = (exam) => {
-    setCurrentExam(exam);
-    setNewExamName(exam.examName); // Pre-fill with the current name
-    setRenameDialogOpen(true);
+    setState((prevState) => ({
+      ...prevState,
+      currentExam: exam,
+      newExamName: exam.examName,
+      renameDialogOpen: true,
+    }));
   };
+
   const handleRenameConfirm = async () => {
-    if (!newExamName.trim()) {
-      setSnackbarMessage("Exam name cannot be empty!");
-      setOpenSnackbar(true);
+    if (!state.newExamName.trim()) {
+      setState((prevState) => ({
+        ...prevState,
+        snackbarMessage: "Exam name cannot be empty!",
+        openSnackbar: true,
+      }));
       return;
     }
 
+    setState((prevState) => ({ ...prevState, mutationLoading: true }));
+
     try {
-      await axios.put(`https://freepare.onrender.com:5000/api/exams/${currentExam._id}`, {
-        examName: newExamName,
+      await axios.put(`${BASE_URL}/exams/${state.currentExam._id}`, {
+        examName: state.newExamName,
       });
 
-      const updatedExams = exams.map((exam) =>
-        exam._id === currentExam._id ? { ...exam, examName: newExamName } : exam
+      const updatedExams = state.exams.map((exam) =>
+        exam._id === state.currentExam._id
+          ? { ...exam, examName: state.newExamName }
+          : exam
       );
-      setExams(updatedExams);
-      setFilteredExams(updatedExams);
-
-      setRenameDialogOpen(false);
-      setSnackbarMessage("Exam renamed successfully!");
-      setOpenSnackbar(true);
+      setState((prevState) => ({
+        ...prevState,
+        exams: updatedExams,
+        renameDialogOpen: false,
+        snackbarMessage: "Exam renamed successfully!",
+        snackbarSeverity: "success",
+        openSnackbar: true,
+        mutationLoading: false,
+      }));
     } catch (error) {
-      setSnackbarMessage("Failed to rename exam!");
-      setOpenSnackbar(true);
+      setState((prevState) => ({
+        ...prevState,
+        snackbarMessage: "Failed to rename exam!",
+        snackbarSeverity: "error",
+        openSnackbar: true,
+        mutationLoading: false,
+      }));
     }
   };
 
   const handleRenameCancel = () => {
-    setRenameDialogOpen(false);
-    setCurrentExam(null);
+    setState((prevState) => ({
+      ...prevState,
+      renameDialogOpen: false,
+      currentExam: null,
+    }));
   };
 
-  const handleDelete = async (id) => {
+  const handleDeleteClick = (exam) => {
+    setState((prevState) => ({
+      ...prevState,
+      examToDelete: exam,
+      deleteDialogOpen: true,
+    }));
+  };
+
+  const handleDeleteConfirm = async () => {
+    setState((prevState) => ({ ...prevState, mutationLoading: true }));
+
     try {
-      await axios.delete(`https://freepare.onrender.com:5000/api/exams/${id}`);
-
-      setExams((prevExams) => prevExams.filter((exam) => exam._id !== id));
-      setFilteredExams((prevExams) =>
-        prevExams.filter((exam) => exam._id !== id)
-      );
-
-      setSnackbarMessage("Exam deleted successfully!");
-      setOpenSnackbar(true);
+      await axios.delete(`${BASE_URL}/exams/${state.examToDelete._id}`);
+      setState((prevState) => ({
+        ...prevState,
+        exams: prevState.exams.filter(
+          (exam) => exam._id !== state.examToDelete._id
+        ),
+        snackbarMessage: "Exam deleted successfully!",
+        snackbarSeverity: "success",
+        openSnackbar: true,
+        deleteDialogOpen: false,
+        examToDelete: null,
+        mutationLoading: false,
+      }));
     } catch (error) {
-      console.error(error);
-      setSnackbarMessage("Failed to delete exam!");
-      setOpenSnackbar(true);
+      setState((prevState) => ({
+        ...prevState,
+        snackbarMessage: "Failed to delete exam!",
+        snackbarSeverity: "error",
+        openSnackbar: true,
+        deleteDialogOpen: false,
+        examToDelete: null,
+        mutationLoading: false,
+      }));
     }
   };
 
+  const handleDeleteCancel = () => {
+    setState((prevState) => ({
+      ...prevState,
+      deleteDialogOpen: false,
+      examToDelete: null,
+    }));
+  };
+
   const handlePreviewClick = (exam) => {
-    setPreviewExam(exam); // Pass the selected exam data
-    setPreviewDialogOpen(true);
+    setState((prevState) => ({
+      ...prevState,
+      previewExam: exam,
+      previewDialogOpen: true,
+    }));
   };
 
   const handleDialogClose = () => {
-    setPreviewDialogOpen(false);
-    setPreviewExam(null);
+    setState((prevState) => ({
+      ...prevState,
+      previewDialogOpen: false,
+      previewExam: null,
+    }));
   };
 
-  if (loading) {
+  const handleRetry = () => {
+    setState((prevState) => ({ ...prevState, loading: true, error: null }));
+    fetchExams();
+  };
+
+  if (state.loading) {
     return (
       <Box
         sx={{
@@ -205,10 +326,13 @@ const ExamsList = () => {
     );
   }
 
-  if (error) {
+  if (state.error) {
     return (
       <Box sx={{ textAlign: "center", color: "red", fontSize: "1.5rem" }}>
-        <Typography variant="h6">{`Error: ${error}`}</Typography>
+        <Typography variant="h6">{`Error: ${state.error}`}</Typography>
+        <Button onClick={handleRetry} variant="contained" color="primary">
+          Retry
+        </Button>
       </Box>
     );
   }
@@ -225,18 +349,26 @@ const ExamsList = () => {
           flexDirection: { xs: "column", sm: "row" },
         }}
       >
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+
         <Typography
           variant="h2"
           sx={{
-            color: "#066C98",
+            background: "linear-gradient(90deg, #066C98, #2CACE3)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            color: "#066C98", // Fallback color
             fontWeight: "500",
             fontSize: { xs: "1.8rem", sm: "2.5rem" },
             mb: { xs: 2, sm: 0 },
           }}
         >
-          Listed Tests
+          Uploaded Tests
         </Typography>
-
+        <Typography variant="h6" sx={{ color: "grey.600" }}>
+          <em> (Total {state.exams.length} Tests)</em>
+        </Typography>
+          </Box>
         <Box
           sx={{
             display: "flex",
@@ -248,9 +380,10 @@ const ExamsList = () => {
           <FormControl size="small" sx={{ minWidth: 150 }}>
             <InputLabel>Sort By</InputLabel>
             <Select
-              value={sortOrder}
+              value={state.sortOrder}
               onChange={handleSortChange}
               label="Sort By"
+              aria-label="Sort exams"
             >
               <MenuItem value="A-Z">A-Z</MenuItem>
               <MenuItem value="Z-A">Z-A</MenuItem>
@@ -262,16 +395,18 @@ const ExamsList = () => {
               variant="outlined"
               placeholder="Search by name or ID"
               size="small"
-              value={searchQuery}
-              onChange={handleSearch}
+              value={state.inputValue}
+              onChange={(e) => handleSearch(e.target.value)}
               InputProps={{
                 startAdornment: (
                   <SearchIcon sx={{ mr: 1, color: "grey.600" }} />
                 ),
               }}
               sx={{ width: { xs: "100%", sm: 300 } }}
+              aria-label="Search exams"
             />
-            {searchQuery && (
+
+            {state.searchQuery && (
               <IconButton onClick={handleClearSearch} aria-label="clear search">
                 <ClearIcon />
               </IconButton>
@@ -283,59 +418,13 @@ const ExamsList = () => {
       <Grid container spacing={3}>
         {currentExams.length > 0 ? (
           currentExams.map((exam) => (
-            <Grid item xs={12} sm={6} md={4} key={exam._id}>
-              <Card
-                sx={{
-                  boxShadow: 3,
-                  transition: "transform 0.3s, box-shadow 0.3s",
-                  "&:hover": {
-                    transform: "translateY(-5px)",
-                    boxShadow: 6,
-                  },
-                }}
-              >
-                <CardContent
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    padding: 2,
-                    backgroundColor: "#fff",
-                    borderRadius: 3,
-                  }}
-                >
-                  <Box>
-                    <Typography
-                      variant="h3"
-                      sx={{ color: "#066C98", fontWeight: "500" }}
-                    >
-                      {exam.examName}
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: "grey", mt: 0.5 }}>
-                      Id: {exam.examId}
-                    </Typography>
-                  </Box>
-                  <Box>
-                    <IconButton onClick={() => handlePreviewClick(exam)}>
-                      <VisibilityIcon />
-                    </IconButton>
-
-                    <IconButton
-                      color="primary"
-                      onClick={() => handleRenameClick(exam)}
-                    >
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton
-                      color="error"
-                      onClick={() => handleDelete(exam._id)}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
+            <MemoizedExamCard
+              key={exam._id}
+              exam={exam}
+              onPreviewClick={handlePreviewClick}
+              onRenameClick={handleRenameClick}
+              onDeleteClick={handleDeleteClick}
+            />
           ))
         ) : (
           <Typography
@@ -347,11 +436,11 @@ const ExamsList = () => {
         )}
       </Grid>
 
-      {filteredExams.length > examsPerPage && (
+      {state.filteredExams.length > examsPerPage && (
         <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
           <Pagination
-            count={Math.ceil(filteredExams.length / examsPerPage)}
-            page={currentPage}
+            count={Math.ceil(state.filteredExams.length / examsPerPage)}
+            page={state.currentPage}
             onChange={handlePageChange}
             color="primary"
           />
@@ -359,7 +448,7 @@ const ExamsList = () => {
       )}
 
       {/* Rename Dialog */}
-      <Dialog open={renameDialogOpen} onClose={handleRenameCancel}>
+      <Dialog open={state.renameDialogOpen} onClose={handleRenameCancel}>
         <DialogTitle>Rename Exam</DialogTitle>
         <DialogContent>
           <TextField
@@ -367,30 +456,39 @@ const ExamsList = () => {
             margin="dense"
             label="New Exam Name"
             fullWidth
-            value={newExamName}
-            onChange={(e) => setNewExamName(e.target.value)}
+            value={state.newExamName}
+            onChange={(e) =>
+              setState((prevState) => ({
+                ...prevState,
+                newExamName: e.target.value,
+              }))
+            }
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleRenameCancel} color="secondary">
             Cancel
           </Button>
-          <Button onClick={handleRenameConfirm} color="primary">
-            Rename
+          <Button
+            onClick={handleRenameConfirm}
+            color="primary"
+            disabled={state.mutationLoading}
+          >
+            {state.mutationLoading ? <CircularProgress size={24} /> : "Rename"}
           </Button>
         </DialogActions>
       </Dialog>
 
       {/* Preview Dialog */}
       <Dialog
-        open={previewDialogOpen}
+        open={state.previewDialogOpen}
         onClose={handleDialogClose}
         maxWidth="md"
         fullWidth
       >
         <DialogTitle>Exam Preview</DialogTitle>
         <DialogContent dividers>
-          {previewExam?.questions?.map((question, index) => (
+          {state.previewExam?.questions?.map((question, index) => (
             <Box key={index} sx={{ mb: 3 }}>
               <Typography variant="h4">
                 {question.questionNo}: {question.questionText}
@@ -453,15 +551,106 @@ const ExamsList = () => {
         </DialogActions>
       </Dialog>
 
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={state.deleteDialogOpen} onClose={handleDeleteCancel}>
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to delete this exam?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteCancel} color="secondary">
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDeleteConfirm}
+            color="primary"
+            disabled={state.mutationLoading}
+          >
+            {state.mutationLoading ? <CircularProgress size={24} /> : "Delete"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       {/* Snackbar for notifications */}
       <Snackbar
-        open={openSnackbar}
+        open={state.openSnackbar}
         autoHideDuration={4000}
-        onClose={() => setOpenSnackbar(false)}
-        message={snackbarMessage}
-      />
+        onClose={() =>
+          setState((prevState) => ({ ...prevState, openSnackbar: false }))
+        }
+      >
+        <Alert severity={state.snackbarSeverity}>{state.snackbarMessage}</Alert>
+      </Snackbar>
     </Box>
   );
+};
+
+const ExamCard = ({ exam, onPreviewClick, onRenameClick, onDeleteClick }) => (
+  <Grid item xs={12} sm={6} md={4}>
+    <Card
+      sx={{
+        boxShadow: 3,
+        transition: "transform 0.3s, box-shadow 0.3s",
+        "&:hover": {
+          transform: "translateY(-5px)",
+          boxShadow: 6,
+        },
+      }}
+    >
+      <CardContent
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: 2,
+          backgroundColor: "#fff",
+          borderRadius: 3,
+        }}
+      >
+        <Box>
+          <Typography variant="h3" sx={{ color: "#066C98", fontWeight: "500" }}>
+            {exam.examName}
+          </Typography>
+          <Typography variant="body2" sx={{ color: "grey", mt: 0.5 }}>
+            Id: {exam.examId}
+          </Typography>
+        </Box>
+        <Box>
+          <Tooltip title="Preview">
+            <IconButton
+              aria-label="Preview"
+              onClick={() => onPreviewClick(exam)}
+            >
+              <VisibilityIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Rename">
+            <IconButton color="primary" onClick={() => onRenameClick(exam)}>
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Delete">
+            <IconButton color="error" onClick={() => onDeleteClick(exam)}>
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      </CardContent>
+    </Card>
+  </Grid>
+);
+
+const MemoizedExamCard = React.memo(ExamCard);
+
+ExamCard.propTypes = {
+  exam: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    examName: PropTypes.string.isRequired,
+    examId: PropTypes.string.isRequired,
+  }).isRequired,
+  onPreviewClick: PropTypes.func.isRequired,
+  onRenameClick: PropTypes.func.isRequired,
+  onDeleteClick: PropTypes.func.isRequired,
 };
 
 export default ExamsList;

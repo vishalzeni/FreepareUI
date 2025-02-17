@@ -51,12 +51,13 @@ const Dashboard = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("info");
   const [isSearching, setIsSearching] = useState(false);
+  const [nameInput, setNameInput] = useState("");
 
   // Fetch users data with retry logic
   useEffect(() => {
     const fetchUsers = async (retries = 3) => {
       try {
-        const response = await axios.get("https://freepare.onrender.com:5000/users-data");
+        const response = await axios.get("http://localhost:5000/users-data");
         setUsers(response.data);
         setLoading(false);
       } catch (err) {
@@ -155,12 +156,6 @@ const Dashboard = () => {
     setPage(0);
   }, []);
 
-  // Menu handlers for completed tests
-  const handleMenuOpen = useCallback((event, tests) => {
-    setAnchorEl(event.currentTarget);
-    setSelectedTests(tests);
-  }, []);
-
   const handleMenuClose = useCallback(() => {
     setAnchorEl(null);
     setSelectedTests(null);
@@ -173,13 +168,32 @@ const Dashboard = () => {
   }, []);
 
   const handleDeleteConfirm = useCallback(() => {
-    setUsers(users.filter((user) => user.id !== userToDelete.id));
-    setDeleteDialogOpen(false);
-    setUserToDelete(null);
-    setSnackbarMessage("User deleted successfully.");
-    setSnackbarSeverity("success");
-    setOpenSnackbar(true);
-  }, [users, userToDelete]);
+    if (nameInput === userToDelete.firstName) {
+      // Make an API call to delete the user using _id
+      axios.delete(`http://localhost:5000/users-data/${userToDelete._id}`)
+        .then((response) => {
+          // Update the users list after successful deletion
+          setUsers(users.filter((user) => user._id !== userToDelete._id));
+          setDeleteDialogOpen(false);
+          setUserToDelete(null);
+          setSnackbarMessage("User deleted successfully.");
+          setSnackbarSeverity("success");
+          setOpenSnackbar(true);
+        })
+        .catch((err) => {
+          // Handle error if the delete fails
+          setSnackbarMessage("Failed to delete user. Please try again later.");
+          setSnackbarSeverity("error");
+          setOpenSnackbar(true);
+          setDeleteDialogOpen(false);
+          setUserToDelete(null);
+        });
+    } else {
+      setSnackbarMessage("Name does not match. User not deleted.");
+      setSnackbarSeverity("error");
+      setOpenSnackbar(true);
+    }
+  }, [users, userToDelete, nameInput]);
 
   const handleDeleteCancel = useCallback(() => {
     setDeleteDialogOpen(false);
@@ -271,14 +285,16 @@ const Dashboard = () => {
           <Typography
             variant="h2"
             gutterBottom
-            style={{
-              fontWeight: 500,
-              textAlign: "center",
-              marginBottom: "20px",
-              color: "#066C98", // Primary color for the title
+            sx={{
+              background: "linear-gradient(90deg, #066C98, #2CACE3)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              fontWeight: "500",
+              fontSize: { xs: "1.8rem", sm: "2.5rem" },
+              mb: { xs: 2, sm: 0 },
             }}
           >
-            Dashboard
+            Users Data
           </Typography>
         </Box>
         <Box sx={{ display: "flex", gap: 2, alignItems: "center", flexDirection: { xs: "column", md: "row" } }}>
@@ -338,17 +354,17 @@ const Dashboard = () => {
                 }}
               >
                 <TableRow>
-                  <TableCell>Profile Picture</TableCell>
-                  <TableCell>First Name</TableCell>
-                  <TableCell>Last Name</TableCell>
-                  <TableCell>Email</TableCell>
-                  <TableCell align="right">Class</TableCell>
-                  <TableCell>Degree Name</TableCell>
-                  <TableCell>Institution Name</TableCell>
-                  <TableCell>Institution Type</TableCell>
-                  <TableCell align="right">Passing Year</TableCell>
-                  <TableCell>User Joined at</TableCell>
-                  <TableCell>Actions</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Profile Picture</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>First Name</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Last Name</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Email</TableCell>
+                  <TableCell align="right" sx={{ fontWeight: "bold" }}>Class</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Degree Name</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Institution Name</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Institution Type</TableCell>
+                  <TableCell align="right" sx={{ fontWeight: "bold" }}>Passing Year</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>User Joined at</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -459,10 +475,14 @@ const Dashboard = () => {
         <DialogTitle>Delete User</DialogTitle>
         <DialogContent>
           Are you sure you want to delete{" "}
-          {userToDelete
-            ? `${userToDelete.firstName} ${userToDelete.lastName}`
-            : "this user"}
-          ?
+          {userToDelete ? userToDelete.firstName : "this user"}?
+          <TextField
+            label="Enter the user's first name to confirm"
+            fullWidth
+            value={nameInput}
+            onChange={(e) => setNameInput(e.target.value)}
+            margin="normal"
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDeleteCancel}>Cancel</Button>

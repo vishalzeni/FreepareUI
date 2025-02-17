@@ -26,7 +26,7 @@ const useFetchExamData = (examId) => {
   useEffect(() => {
     if (examId) {
       setLoading(true);
-      fetch(`http://localhost:5000/api/exams`)
+      fetch(`https://freepare.onrender.com/api/exams`)
         .then((response) => {
           if (!response.ok) {
             throw new Error(`Server Error: ${response.statusText}`);

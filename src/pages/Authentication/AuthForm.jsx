@@ -102,7 +102,7 @@ const AuthForm = ({ type }) => {
     };
 
     try {
-      const response = await fetch(`http://localhost:5000/${type}`, {
+      const response = await fetch(`https://freepare.onrender.com/${type}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

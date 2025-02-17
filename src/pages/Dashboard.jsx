@@ -57,7 +57,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchUsers = async (retries = 3) => {
       try {
-        const response = await axios.get("http://localhost:5000/users-data");
+        const response = await axios.get("https://freepare.onrender.com/users-data");
         setUsers(response.data);
         setLoading(false);
       } catch (err) {
@@ -170,7 +170,7 @@ const Dashboard = () => {
   const handleDeleteConfirm = useCallback(() => {
     if (nameInput === userToDelete.firstName) {
       // Make an API call to delete the user using _id
-      axios.delete(`http://localhost:5000/users-data/${userToDelete._id}`)
+      axios.delete(`https://freepare.onrender.com/users-data/${userToDelete._id}`)
         .then((response) => {
           // Update the users list after successful deletion
           setUsers(users.filter((user) => user._id !== userToDelete._id));

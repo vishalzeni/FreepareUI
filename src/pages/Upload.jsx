@@ -191,7 +191,7 @@ export default function Upload() {
       // Proceed with the upload only if exam name is valid
       setIsUploading(true);
       try {
-        const response = await fetch("http://localhost:5000/api/exam", {
+        const response = await fetch("https://freepare.onrender.com/api/exam", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

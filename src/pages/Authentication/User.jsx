@@ -75,7 +75,7 @@ const User = ({ open, onClose, onUpdateImage }) => {
           return;
         }
 
-        const response = await fetch(`http://localhost:5000/users/${userId}`, {
+        const response = await fetch(`https://freepare.onrender.com/users/${userId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -114,7 +114,7 @@ const User = ({ open, onClose, onUpdateImage }) => {
       }
 
       const response = await fetch(
-        "http://localhost:5000/users/update-avatar",
+        "https://freepare.onrender.com/users/update-avatar",
         {
           method: "PUT",
           headers: {
@@ -201,7 +201,7 @@ const User = ({ open, onClose, onUpdateImage }) => {
         userId: userId, // Add userId here
       };
 
-      const response = await fetch("http://localhost:5000/users/add-info", {
+      const response = await fetch("https://freepare.onrender.com/users/add-info", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -266,7 +266,7 @@ const User = ({ open, onClose, onUpdateImage }) => {
         userId: userId, // Add userId here
       };
 
-      const response = await fetch("http://localhost:5000/users/update", {
+      const response = await fetch("https://freepare.onrender.com/users/update", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

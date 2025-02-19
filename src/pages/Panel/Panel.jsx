@@ -320,7 +320,7 @@ const Panel = () => {
 
   const updateEntity = useCallback(
     async (entity) => {
-      const invalidChars = /[^a-zA-Z0-9\s]/;
+      const invalidChars = /[^a-zA-Z0-9\s&/]/;
       if (!editingName || invalidChars.test(editingName)) {
         showSnackbar(
           "Invalid name. Only alphanumeric characters are allowed.",

@@ -607,7 +607,27 @@ const Hierarchy = () => {
           <ArrowBack />
         </IconButton>
       )}
-
+<Typography
+        variant="h1"
+        align="center"
+        sx={{
+          mb: 3,
+          background: `linear-gradient(90deg, ${COLORS.primary}, ${COLORS.secondary})`,
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          padding: "10px",
+          borderRadius: "8px",
+          fontWeight: "500",
+          fontSize: {
+            xs: "1.6rem", // For extra small screens (phones)
+            sm: "1.8rem", // For small screens (tablets)
+            md: "2.2rem", // For medium screens (laptops)
+          },
+        }}
+      >
+        Welcome to <span style={{ fontWeight: "550" }}>FREEPARE </span> – Ace
+        Your Exams for Free!
+      </Typography>
       {currentEntity && (
         <Typography
           variant="h2"
@@ -631,27 +651,7 @@ const Hierarchy = () => {
         </Typography>
       )}
 
-      <Typography
-        variant="h1"
-        align="center"
-        sx={{
-          mb: 3,
-          background: `linear-gradient(90deg, ${COLORS.primary}, ${COLORS.secondary})`,
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          padding: "10px",
-          borderRadius: "8px",
-          fontWeight: "500",
-          fontSize: {
-            xs: "1.6rem", // For extra small screens (phones)
-            sm: "1.8rem", // For small screens (tablets)
-            md: "2.2rem", // For medium screens (laptops)
-          },
-        }}
-      >
-        Welcome to <span style={{ fontWeight: "550" }}>FREEPARE </span> – Ace
-        Your Exams for Free!
-      </Typography>
+      
 
       {showSearch && (
         <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>

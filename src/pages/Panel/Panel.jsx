@@ -187,7 +187,7 @@ const Panel = () => {
     });
     setEditingEntity(null);
   };
-  const invalidChars = /[^a-zA-Z0-9\s]/;
+  const invalidChars = /[^a-zA-Z0-9\s&/]/;
 
   const isValidUrl = (url) => {
     try {

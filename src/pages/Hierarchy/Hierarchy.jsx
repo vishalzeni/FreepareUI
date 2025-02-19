@@ -607,6 +607,7 @@ const Hierarchy = () => {
           <ArrowBack />
         </IconButton>
       )}
+      {path.length === 0 && (
 <Typography
         variant="h1"
         align="center"
@@ -627,7 +628,7 @@ const Hierarchy = () => {
       >
         Welcome to <span style={{ fontWeight: "550" }}>FREEPARE </span> – Ace
         Your Exams for Free!
-      </Typography>
+      </Typography>)}
       {currentEntity && (
         <Typography
           variant="h2"

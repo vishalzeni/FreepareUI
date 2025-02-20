@@ -21,12 +21,17 @@ const fadeIn = keyframes`
   to { opacity: 1; transform: translateY(0); }
 `;
 
+const iconAnimation = keyframes`
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+`;
+
 const colors = {
   primary: '#066C98',
   secondary: '#ff4081',
   background: '#f5f5f5',
   text: '#333',
-  icon: '#066C98',
+  icons: ['#066C98', '#FF5733', '#28A745', '#FFC107', '#17A2B8', '#6F42C1', '#E83E8C'],
 };
 
 const CustomPrevArrow = (props) => {
@@ -113,14 +118,43 @@ const WhyFreepare = () => {
   };
 
   const cardData = [
-    { icon: <EmojiPeople sx={{ fontSize: 48, color: colors.icon }} />, title: 'User Experience', description: 'FREEPARE provides a seamless and intuitive user experience...' },
-    { icon: <Verified sx={{ fontSize: 48, color: colors.icon }} />, title: 'Quality Assurance', description: 'At FREEPARE, we ensure the highest level of quality for all our test materials...' },
-    { icon: <School sx={{ fontSize: 48, color: colors.icon }} />, title: 'Expert Approach', description: 'FREEPARE’s tests are not only about practicing questions but also about understanding the core concepts...' },
-    { icon: <MonetizationOn sx={{ fontSize: 48, color: colors.icon }} />, title: 'Free of Cost', description: 'One of the major benefits of FREEPARE is that all of our tests and resources are available completely free of charge...' },
-    { icon: <Timer sx={{ fontSize: 48, color: colors.icon }} />, title: 'Flexible Testing Format', description: 'FREEPARE offers an incredibly flexible testing format that allows students to take tests at their own pace...' },
-    { icon: <OndemandVideo sx={{ fontSize: 48, color: colors.icon }} />, title: 'Video Solutions', description: 'Understanding complex concepts is made easier with FREEPARE’s video solutions...' },
-    { icon: <Public sx={{ fontSize: 48, color: colors.icon }} />, title: 'Accessibility', description: 'The convenience of FREEPARE lies in its accessibility. Students can access the tests anytime and anywhere...' },
+    { 
+      icon: <EmojiPeople sx={{ fontSize: 50, color: colors.icons[0], animation: `${iconAnimation} 2s infinite` }} />, 
+      title: 'User Experience', 
+      description: 'FREEPARE is designed with a user-first approach, ensuring a seamless, intuitive, and hassle-free experience. With a clean, modern interface and smooth navigation, students can focus entirely on learning without distractions, making test preparation effortless and enjoyable.' 
+    },
+    { 
+      icon: <Verified sx={{ fontSize: 50, color: colors.icons[1], animation: `${iconAnimation} 2s infinite` }} />, 
+      title: 'Quality Assurance', 
+      description: 'Every test and study material on FREEPARE is meticulously curated by subject-matter experts to maintain the highest level of accuracy and reliability. Our commitment to quality ensures that students get well-structured, up-to-date, and conceptually sound practice resources, helping them build a solid foundation for success.' 
+    },
+    { 
+      icon: <School sx={{ fontSize: 50, color: colors.icons[2], animation: `${iconAnimation} 2s infinite` }} />, 
+      title: 'Expert Approach', 
+      description: 'FREEPARE goes beyond basic test practice by fostering deep conceptual clarity and analytical reasoning. Our expertly crafted questions challenge students to think critically, helping them develop problem-solving skills essential for competitive exams and real-world applications.' 
+    },
+    { 
+      icon: <MonetizationOn sx={{ fontSize: 50, color: colors.icons[3], animation: `${iconAnimation} 2s infinite` }} />, 
+      title: 'Free of Cost', 
+      description: 'Education should be a right, not a privilege. That’s why FREEPARE offers unlimited access to all its tests, study materials, and learning resources—completely free of charge. No hidden fees, no subscriptions—just quality learning for everyone, anytime, anywhere.' 
+    },
+    { 
+      icon: <Timer sx={{ fontSize: 50, color: colors.icons[4], animation: `${iconAnimation} 2s infinite` }} />, 
+      title: 'Flexible Testing Format', 
+      description: 'Not everyone learns at the same pace, and we understand that. FREEPARE provides customizable test formats, allowing students to choose difficulty levels, set timers, and practice according to their comfort. Whether you prefer quick quizzes or full-length tests, you have the freedom to learn your way.' 
+    },
+    { 
+      icon: <OndemandVideo sx={{ fontSize: 50, color: colors.icons[5], animation: `${iconAnimation} 2s infinite` }} />, 
+      title: 'Video Solutions', 
+      description: 'Struggling with complex concepts? FREEPARE offers detailed video explanations for every test, breaking down difficult topics into simple, easy-to-understand lessons. With step-by-step guidance from experts, students can master challenging subjects more effectively and retain knowledge for the long term.' 
+    },
+    { 
+      icon: <Public sx={{ fontSize: 50, color: colors.icons[6], animation: `${iconAnimation} 2s infinite` }} />, 
+      title: 'Global Accessibility', 
+      description: 'Education should have no boundaries. FREEPARE is accessible worldwide, empowering students from different backgrounds and regions with high-quality learning resources. No matter where you are, you can access expert-level test preparation and take a step toward academic excellence.' 
+    },
   ];
+  
 
   return (
     <Container sx={{ my: 2, py: 4 }}>
@@ -129,11 +163,11 @@ const WhyFreepare = () => {
         align="center"
         gutterBottom
         sx={{
+          fontWeight: '500',
+          fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.5rem' },
           background: 'linear-gradient(90deg, #066C98, #2CACE3)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
-          fontWeight: 500,
-          fontSize: '2rem',
           mb: 2,
           animation: `${fadeIn} 1s ease-in-out`,
         }}
@@ -154,7 +188,7 @@ const WhyFreepare = () => {
                   transform: 'translateY(-10px)',
                   boxShadow: 6,
                 },
-                height: '300px',
+                height: 'auto', // Changed height to auto
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
@@ -176,11 +210,11 @@ const WhyFreepare = () => {
                     sx={{
                       color: colors.text,
                       lineHeight: 1.6,
-                      display: '-webkit-box',
-                      WebkitLineClamp: 5,
-                      WebkitBoxOrient: 'vertical',
-                      overflow: 'hidden',
+                      overflow: 'hidden', // Added ellipsis for text overflow
                       textOverflow: 'ellipsis',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 7,
+                      WebkitBoxOrient: 'vertical',
                     }}
                   >
                     {card.description}

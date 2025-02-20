@@ -14,6 +14,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import User from "../pages/Authentication/User"; // Import the User dialog component
 import jwtDecode from "jwt-decode";
+import Logo from "../Assets/Freepare_Logo.png"; // Import the logo image
 
 const Navbar = () => {
   const [showSearch, setShowSearch] = useState(false);
@@ -83,16 +84,36 @@ const Navbar = () => {
         }}
       >
         <Toolbar>
-          <Typography
-            variant="h6"
-            style={{
-              flexGrow: 1,
-              color: theme.palette.primary.main,
-              fontSize: "1.5rem",
-            }}
-          >
-            FREEPARE
-          </Typography>
+        <Typography
+  variant="h6"
+  sx={{
+    flexGrow: 1,
+    display: 'flex',
+    alignItems: 'center',
+    color: theme.palette.primary.main,
+    py: 0,
+    px: 1,
+    width: { xs: '100px', sm: '140px', md: '160px', lg: '180px' }, // ✅ Large screens ke liye controlled size
+    minWidth: { xs: '100px', sm: '140px', md: '160px', lg: '180px' },
+
+    '& img': {
+      transition: 'all 0.3s ease',
+    }
+  }}
+>
+  <img
+    src={Logo}
+    alt="FREEPARE Logo"
+    style={{
+      height: 'auto',
+      width: '100%',
+      maxWidth: '180px', // ✅ Large screens pe ek max size limit
+      objectFit: 'contain',
+      minWidth: '100px', // ✅ Ensure chhoti screen pe minimum size maintain rahe
+    }}
+  />
+</Typography>
+
           {showSearch && (
             <IconButton
               color="inherit"

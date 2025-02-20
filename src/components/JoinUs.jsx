@@ -1,5 +1,7 @@
 import React from "react";
-import { Button, Typography, Box, Grid } from "@mui/material";
+import { Button, Typography, Box, Grid, Container } from "@mui/material";
+import { Sparkles } from "lucide-react"; // ✨ Sparkling Star Icon
+import img from "../Assets/Freepare_Exam_Img.png";
 
 const JoinUs = () => {
   const handleButtonClick = () => {
@@ -7,15 +9,9 @@ const JoinUs = () => {
   };
 
   return (
-    <Box sx={{ width: "100%" }}>
-      <Box
-        sx={{
-          maxWidth: "1200px",
-          margin: "0 auto",
-          padding: {xs: 3, sm: 2, md: 0},
-        }}
-      >
-        <Grid container spacing={6} alignItems="center">
+    <Box sx={{ width: "100%", py: { xs: 4, sm: 6, md: 8 } }}>
+      <Container maxWidth="lg">
+        <Grid container spacing={8} alignItems="center">
           {/* Left Side Content */}
           <Grid item xs={12} md={6}>
             <Typography
@@ -23,7 +19,7 @@ const JoinUs = () => {
               gutterBottom
               sx={{
                 fontWeight: "500",
-                fontSize: "2rem",
+                fontSize: { xs: "1.8rem", sm: "2.2rem", md: "2.5rem" },
                 background: "linear-gradient(90deg, #066C98, #2CACE3)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
@@ -34,35 +30,27 @@ const JoinUs = () => {
             <Typography
               variant="body1"
               paragraph
-              sx={{ color: "#555", marginBottom: "24px" }}
+              sx={{ color: "#555", mb: 3 }}
             >
               At <b>FREEPARE</b>, we are committed to providing high-quality exam
               preparation resources completely free of charge.
             </Typography>
-            <ul
-              style={{ margin: "0 0 24px", paddingLeft: "20px", color: "#555" }}
-            >
-              <li style={{ marginBottom: "12px" }}>
-                <Typography variant="body1">
-                  High quality exam preparation.
-                </Typography>
-              </li>
-              <li style={{ marginBottom: "12px" }}>
-                <Typography variant="body1">
-                  Wide range of test categories.
-                </Typography>
-              </li>
-              <li style={{ marginBottom: "12px" }}>
-                <Typography variant="body1">
-                  No hidden charges, completely free of cost.
-                </Typography>
-              </li>
-              <li style={{ marginBottom: "12px" }}>
-                <Typography variant="body1">
-                  Free mock tests for various exams.
-                </Typography>
-              </li>
-            </ul>
+
+            {/* Features with Sparkling Star Icons ✨ */}
+            <Box sx={{ mb: 3 }}>
+              {[
+                "High quality exam preparation.",
+                "Wide range of test categories.",
+                "No hidden charges, completely free of cost.",
+                "Free mock tests for various exams.",
+              ].map((text, index) => (
+                <Box key={index} sx={{ display: "flex", alignItems: "center", mb: 1.5 }}>
+                  <Sparkles size={20} color="#FFA500" style={{ marginRight: "10px" }} />
+                  <Typography variant="body1">{text}</Typography>
+                </Box>
+              ))}
+            </Box>
+
             <Button
               variant="contained"
               color="primary"
@@ -71,7 +59,8 @@ const JoinUs = () => {
               sx={{
                 textTransform: "none",
                 fontSize: "16px",
-                padding: "6px 24px",
+                px: 3,
+                py: 1.5,
                 borderRadius: 1,
               }}
             >
@@ -83,15 +72,17 @@ const JoinUs = () => {
           <Grid item xs={12} md={6}>
             <Box
               component="img"
-              src="https://s3-alpha-sig.figma.com/img/3d12/e646/d8b1c2a08af2332c30872912698ba920?Expires=1739145600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=WgFMGDzbsHntEyGbD6JHWqsjfyQhP14O~EQ5BqEIO60yjdca7vtK~znsBgbE6YaVObSb1thR5yz~eXz1JaQ0m-lVgn4MtfIPQoM2i856qQlZmNHRQbbPRQ~Ez3arkmbAbw82yxYRndf6sPXpo2zML-hVNhc4CLE~7sME8ojikhAihWGi0ncDpkRCqpSIoiwUhYLTFy6gc5aS-11TgVJNAoyZXEWfH2xi~~vyz2izdn6eG3Fo8Tv08TEyeaaQQafSj6LZ-p942m7jnehWicDfC-NBzatCtSo081Td0Lmpb6RMmMT6BjNcfGA0uSesRtOisQ-424O3Pfu1GuwoM3Xr5A__"
+              src={img}
               alt="Join Us"
               sx={{
-                width: "100%",
+                width: { xs: "100%", sm: "90%", md: "80%" },
+                mx: "auto",
+                display: "block",
               }}
             />
           </Grid>
         </Grid>
-      </Box>
+      </Container>
     </Box>
   );
 };

@@ -16,6 +16,7 @@ import {
 import { Link as RouterLink } from "react-router-dom";
 import PasswordStrengthBar from "react-password-strength-bar";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import img from "../../Assets/Freepare_LogIn.png";
 
 const AuthForm = ({ type }) => {
   const [email, setEmail] = useState("");
@@ -185,8 +186,7 @@ const AuthForm = ({ type }) => {
         sm={4}
         md={5}
         sx={{
-          backgroundImage:
-            "url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0vwYhdNz0-wTJrF7QLWZJNNaSMns-SIvy3w&s')",
+          backgroundImage: {xs: "none", sm: `url(${img})`},
           backgroundSize: "cover",
           backgroundPosition: "center",
           height: "70vh",
@@ -339,13 +339,12 @@ const AuthForm = ({ type }) => {
                         ),
                       }}
                     />
-                    <PasswordStrengthBar password={password} onChangeScore={(score) => {
-                      const strength = ["Weak", "Fair", "Good", "Strong", "Very Strong"];
-                      setPasswordStrength(strength[score]);
-                    }} />
-                    <Typography variant="body2" color="textSecondary">
-                      Password Strength: {passwordStrength}
-                    </Typography>
+                    {password && (
+                      <PasswordStrengthBar password={password} onChangeScore={(score) => {
+                        setPasswordStrength(score);
+                      }} />
+                    )}
+                    
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <TextField

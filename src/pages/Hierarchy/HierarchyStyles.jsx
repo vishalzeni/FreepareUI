@@ -18,7 +18,9 @@ export const STYLES = {
     borderRadius: "16px",
     boxShadow: "0 6px 15px rgba(0, 0, 0, 0.1)",
     transition: "transform 0.3s ease, box-shadow 0.3s ease",
-    minHeight: "200px",
+    minHeight: "250px",
+    display: "flex",
+    flexDirection: "column",
     overflow: "hidden",
     "&:hover": {
       boxShadow: "0 8px 20px rgba(0, 0, 0, 0.15)",
@@ -124,20 +126,25 @@ export const STYLES = {
   },
   viewMoreTypography: {
     textTransform: "none",
-    fontWeight: "500",
-    borderRadius: "8px",
+    fontWeight: 600, // ✅ Thoda bold for better readability
+    fontSize: "14px", // ✅ Slightly optimized font-size
+    borderRadius: "10px", // ✅ Smoother rounded edges
     textAlign: "right",
     color: COLORS.primary,
     cursor: "pointer",
-    padding: "6px 16px",
-    boxShadow: 2,
+    padding: "8px 18px", // ✅ Thoda zyada padding for better click area
+    boxShadow: "none",
     border: `1px solid ${COLORS.primary}`,
+    transition: "all 0.3s ease-in-out", // ✅ Smooth hover effect
+  
     "&:hover": {
       backgroundColor: COLORS.primary,
       color: COLORS.white,
-      transform: "scale(1.05)",
+      transform: "scale(1.06)", // ✅ Subtle lift effect
+      boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", // ✅ Light shadow on hover
     },
   },
+  
   descriptionTypography: {
     color: COLORS.black,
     display: "-webkit-box",

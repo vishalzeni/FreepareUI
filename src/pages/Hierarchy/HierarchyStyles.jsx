@@ -16,7 +16,7 @@ export const STYLES = {
     backgroundColor: COLORS.white,
     padding: "20px",
     borderRadius: "16px",
-    boxShadow: "0 6px 15px rgba(0, 0, 0, 0.1)",
+    boxShadow: "0 8px 20px rgba(0, 0, 0, 0.15)", // Better Depth
     transition: "transform 0.3s ease, box-shadow 0.3s ease",
     minHeight: "250px",
     display: "flex",
@@ -24,7 +24,7 @@ export const STYLES = {
     justifyContent: "space-between",
     overflow: "hidden",
     "&:hover": {
-      boxShadow: "0 8px 20px rgba(0, 0, 0, 0.15)",
+      boxShadow: "0 12px 30px rgba(0, 0, 0, 0.25)", // Stronger Hover Shadow
     },
     cursor: "pointer",
   },

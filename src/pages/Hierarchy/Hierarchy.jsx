@@ -13,6 +13,7 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
+  Container,
 } from "@mui/material";
 import {
   Dialog,
@@ -590,6 +591,10 @@ const Hierarchy = () => {
     );
   }
   return (
+    <Grid sx={{
+      maxWidth: "lg",
+      margin: "0 auto",
+    }}>
     <Box
       sx={{
         padding: "30px",
@@ -1487,6 +1492,7 @@ const Hierarchy = () => {
         </Alert>
       </Snackbar>
     </Box>
+    </Grid>
   );
 };
 

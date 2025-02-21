@@ -116,33 +116,35 @@ const Admin = () => {
       title: "Uploaded Tests",
       description:
         "View, preview, edit, and delete uploaded tests with unique IDs.",
-      icon: <DashboardIcon sx={{ color: "#066C98", fontSize: 42 }} />,
+      icon: <DashboardIcon sx={{ color: "#D32F2F", fontSize: 44 }} />, // Dark Red
     },
     {
       title: "Panel",
       description:
         "Create, update, and delete entities with relationships in a tree structure.",
-      icon: <PanelIcon sx={{ color: "#066C98", fontSize: 42 }} />,
+      icon: <PanelIcon sx={{ color: "#008B8B", fontSize: 44 }} />, // Dark Cyan
     },
     {
       title: "Upload",
       description:
         "Upload Excel files, preview data, generate IDs, and save to the database.",
-      icon: <UploadIcon sx={{ color: "#066C98", fontSize: 42 }} />,
+      icon: <UploadIcon sx={{ color: "#D4A017", fontSize: 44 }} />, // Deep Gold
     },
     {
       title: "Users Data",
       description:
         "View and manage user details in a list format. Export as an Excel file.",
-      icon: <ExamListIcon sx={{ color: "#066C98", fontSize: 42 }} />,
+      icon: <ExamListIcon sx={{ color: "#0056B3", fontSize: 44 }} />, // Dark Blue
     },
     {
       title: "Admin Code",
       description:
         "Manage admin codes for secure access to the admin panel and features.",
-      icon: <AdminCodeIcon sx={{ color: "#066C98", fontSize: 42 }} />,
+      icon: <AdminCodeIcon sx={{ color: "#7B1FA2", fontSize: 44 }} />, // Dark Purple
     },
   ];
+  
+  
 
   return (
     <Box

@@ -202,10 +202,6 @@ const Panel = () => {
       showSnackbar("Name cannot be empty", "warning");
       return false;
     }
-    if (invalidChars.test(formState.name)) {
-      showSnackbar("Only letters, numbers and spaces allowed", "warning");
-      return false;
-    }
     if (formState.type === "paper" && !isValidUrl(formState.videoLink)) {
       showSnackbar("Invalid video URL format", "warning");
       return false;
@@ -319,12 +315,8 @@ const Panel = () => {
 
   const updateEntity = useCallback(
     async (entity) => {
-      const invalidChars = /[^a-zA-Z0-9\s&/]/;
-      if (!editingName || invalidChars.test(editingName)) {
-        showSnackbar(
-          "Invalid name. Only alphanumeric characters are allowed.",
-          "warning"
-        );
+      if (!editingName) {
+        showSnackbar("Name cannot be empty", "warning");
         return;
       }
 

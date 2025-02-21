@@ -21,6 +21,7 @@ export const STYLES = {
     minHeight: "250px",
     display: "flex",
     flexDirection: "column",
+    justifyContent: "space-between",
     overflow: "hidden",
     "&:hover": {
       boxShadow: "0 8px 20px rgba(0, 0, 0, 0.15)",
@@ -151,7 +152,7 @@ export const STYLES = {
     WebkitBoxOrient: "vertical",
     overflow: "hidden",
     textOverflow: "ellipsis",
-    WebkitLineClamp: 3,
+    WebkitLineClamp: 5,
   },
   percentageTypography: {
     color: COLORS.black,

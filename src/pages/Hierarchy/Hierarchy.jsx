@@ -1130,11 +1130,9 @@ const Hierarchy = () => {
           {filteredEntities.map((entity) => (
             <Grid item key={entity.id} xs={12} sm={6} md={6} lg={4}>
               <Card
-                sx={{
-                  ...STYLES.card,
-                  display: "flex",
-                  flexDirection: "column",
-                }}
+                sx={
+                STYLES.card
+                }
                 onClick={() => navigateTo(entity)}
                 aria-label={`Navigate to ${entity.name}`}
               >
@@ -1145,17 +1143,24 @@ const Hierarchy = () => {
                 >
                   {entity.name}
                 </Typography>
-                <Box sx={{ flexGrow: 1 }}>
 
-                {!(currentEntity && currentEntity.type === "subject") &&
-                  !(
+                {!(currentEntity && currentEntity.type === "subject") && !(
                     currentEntity &&
                     currentEntity.children?.some(
                       (child) => child.type === "topic"
                     )
                   ) &&
                   entity.children && (
-                    <Box sx={{ mt: 2 }}>
+                    <Box  sx={{
+                      mt:
+                        entity.children.length === 1
+                          ? "-75px"
+                          : entity.children.length === 2
+                          ? "-50px"
+                          : entity.children.length === 3
+                          ? "-20px"
+                          : "10px",
+                    }}>
                       {entity.children.slice(0, 4).map((child) => (
                         <Typography
                           key={child.id}
@@ -1380,7 +1385,7 @@ const Hierarchy = () => {
                       </Box>
                     </Box>
                   )}
-</Box>
+
                 {/* description for topics */}
                 {currentEntity &&
                   (currentEntity.type === "subject" ||

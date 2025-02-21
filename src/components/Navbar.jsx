@@ -164,7 +164,7 @@ const Navbar = () => {
                     fontWeight: "bold",
                   }}
                 >
-                  {userName || "User"} {/* Default name if no userName available */}
+                  {userName || ""} {/* Default name if no userName available */}
                 </Typography>
               </Button>
 

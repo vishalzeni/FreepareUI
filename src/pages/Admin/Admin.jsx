@@ -217,7 +217,7 @@ const Admin = () => {
                   fontSize: "2.5rem",
                 }}
               >
-                Admin Panel
+                Admin
               </Typography>
               <Grid container spacing={3} justifyContent="center">
                 {cardData.map(({ title, description, icon }, index) => (

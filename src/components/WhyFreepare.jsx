@@ -13,8 +13,6 @@ import {
   OndemandVideo,
   Public,
 } from '@mui/icons-material';
-import ArrowBackIos from '@mui/icons-material/ArrowBackIos';
-import ArrowForwardIos from '@mui/icons-material/ArrowForwardIos';
 
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(20px); }
@@ -34,60 +32,6 @@ const colors = {
   icons: ['#066C98', '#FF5733', '#28A745', '#FFC107', '#17A2B8', '#6F42C1', '#E83E8C'],
 };
 
-const CustomPrevArrow = (props) => {
-  const { onClick, isHidden } = props;
-  if (isHidden) return null;
-  return (
-    <Box
-      onClick={onClick}
-      sx={{
-        position: 'absolute',
-        left: '-40px',
-        top: '50%',
-        transform: 'translateY(-50%)',
-        zIndex: 1,
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: '35px',
-        height: '35px',
-        borderRadius: '50%',
-        color: colors.primary,
-      }}
-    >
-      <ArrowBackIos />
-    </Box>
-  );
-};
-
-const CustomNextArrow = (props) => {
-  const { onClick, isHidden } = props;
-  if (isHidden) return null;
-  return (
-    <Box
-      onClick={onClick}
-      sx={{
-        position: 'absolute',
-        right: '-40px',
-        top: '50%',
-        transform: 'translateY(-50%)',
-        zIndex: 1,
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: '35px',
-        height: '35px',
-        borderRadius: '50%',
-        color: colors.primary,
-      }}
-    >
-      <ArrowForwardIos fontSize="small" />
-    </Box>
-  );
-};
-
 const WhyFreepare = () => {
   const isMobile = useMediaQuery('(max-width:600px)');
 
@@ -99,8 +43,6 @@ const WhyFreepare = () => {
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 3000,
-    prevArrow: <CustomPrevArrow isHidden={isMobile} />,
-    nextArrow: <CustomNextArrow isHidden={isMobile} />,
     responsive: [
       {
         breakpoint: 1024,

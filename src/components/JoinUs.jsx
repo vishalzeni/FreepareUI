@@ -9,7 +9,7 @@ const JoinUs = () => {
   };
 
   return (
-    <Box sx={{ width: "100%", py: { xs: 4, sm: 6, md: 8 } }}>
+    <Box sx={{ width: "100%", p: { xs: 2, sm: 3, md: 4 } }}>
       <Container maxWidth="lg">
         <Grid container spacing={8} alignItems="center">
           {/* Left Side Content */}
@@ -60,7 +60,6 @@ const JoinUs = () => {
                 textTransform: "none",
                 fontSize: "16px",
                 px: 3,
-                py: 1.5,
                 borderRadius: 1,
               }}
             >

@@ -1,5 +1,4 @@
-import React from 'react';
-import { Typography, Card, Container, Box, useMediaQuery } from '@mui/material';
+import { Typography, Card, Container, Box } from '@mui/material';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -33,10 +32,10 @@ const colors = {
 };
 
 const WhyFreepare = () => {
-  const isMobile = useMediaQuery('(max-width:600px)');
 
   const settings = {
     dots: true,
+    arrows: false,
     infinite: true,
     speed: 500,
     slidesToShow: 3,

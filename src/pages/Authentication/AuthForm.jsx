@@ -434,7 +434,7 @@ const AuthForm = ({ type }) => {
               aria-busy={isLoading}
             >
               {isLoading ? (
-                <CircularProgress size={24} />
+                <CircularProgress size={24} sx={{ color: "#fff" }} />
               ) : type === "signup" ? (
                 "Sign Up"
               ) : (

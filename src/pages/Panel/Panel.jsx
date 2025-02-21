@@ -18,14 +18,12 @@ import {
 import {
   Edit,
   Delete,
-  School,
-  Book,
   Description,
-  Article,
   ExpandLess,
   ExpandMore,
   DragIndicator,
 } from "@mui/icons-material";
+import { AssignmentOutlined, MenuBook, Category } from "@mui/icons-material";
 import axios from "axios";
 import { styles } from "./PanelStyles";
 import { produce } from "immer";
@@ -46,13 +44,29 @@ const BASE_URL = "https://freepare.onrender.com/api";
 const SortableItem = ({ entity, renderEntity, depth = 0 }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: entity._id });
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    marginBottom: "8px",
-    border: "1px solid #ccc",
-    padding: "8px",
-  };
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition: transition || 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', // Smoother bezier curve
+      marginBottom: "16px",
+      border: "none",
+      padding: "2px 10px", // Improved vertical spacing
+      background: " #f9fafb", // Soft off-white background
+      borderRadius: "14px", // Increased for modern aesthetic
+      boxShadow: "0 10px 30px -5px rgba(0, 0, 0, 0.1)", // Modern default shadow
+      borderLeft: "4px solid rgb(26, 61, 234)", // Soft periwinkle accent
+      '&:hover': {
+        transform: "translateY(-1px)", // Subtle lift effect
+        boxShadow: "0 8px 24px -4px rgba(0, 0, 0, 0.08)", // Softer, minimal shadow
+        background: "linear-gradient(95deg, #f8fafc 0%, #fdf2f8 100%)", // Subtle gradient
+        borderLeftColor: "#818cf8", // Medium indigo
+      },
+      '&:active': {
+        transform: "translateY(0)",
+        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)", // Flatter, pressed shadow
+        background: "#f3f4f6", // Warm light gray
+        borderLeftColor: "#c7d2fe", // Light periwinkle
+      }
+    };
 
   // Pass the combined dnd kit props (listeners & attributes) to be applied on the drag handle.
   const dragHandleProps = { ...listeners, ...attributes };
@@ -92,7 +106,6 @@ const Panel = () => {
   const [loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
   const [isReordering, setIsReordering] = useState(false);
-
 
   // Dialog and Snackbar States
   const [dialogState, setDialogState] = useState({
@@ -200,10 +213,6 @@ const Panel = () => {
   const validateForm = () => {
     if (!formState.name.trim()) {
       showSnackbar("Name cannot be empty", "warning");
-      return false;
-    }
-    if (formState.type === "paper" && !isValidUrl(formState.videoLink)) {
-      showSnackbar("Invalid video URL format", "warning");
       return false;
     }
     return true;
@@ -458,7 +467,7 @@ const Panel = () => {
           ? "Network Error - Check Internet Connection"
           : "Server Error - Please Try Again Later");
       showSnackbar(message, "error");
-    } finally{
+    } finally {
       setIsReordering(false);
     }
   };
@@ -518,10 +527,10 @@ const Panel = () => {
     (entity, dragHandleProps = {}, depth = 0) => {
       const isExpanded = expandedEntities.has(entity._id);
       const iconMap = {
-        exam: <School />,
-        subject: <Book />,
-        topic: <Description />,
-        paper: <Article />,
+        exam: <AssignmentOutlined sx={{ color: "#E65100", fontSize: 32 }} />, // Deep Purple
+        subject: <MenuBook sx={{ color: "#6A1B9A", fontSize: 30 }} />, // Deep Teal
+        topic: <Category sx={{ color: "#00796B", fontSize: 28 }} />, // Deep Orange
+        paper: <Description sx={{ color: "#1E88E5", fontSize: 26 }} />, // Bright Blue
       };
 
       return (
@@ -674,7 +683,11 @@ const Panel = () => {
   }
 
   return (
-    <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd} disable={isAdding || isReordering}>
+    <DndContext
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
+      disable={isAdding || isReordering}
+    >
       <Container sx={styles.container}>
         <Typography variant="h1" align="center" sx={styles.title}>
           Panel
@@ -714,21 +727,21 @@ const Panel = () => {
           ))}
         </Box>
         {undoState.visible && (
-          <Box sx={styles.undoBox(undoState.position)}>
-            <Typography variant="body2" align="center">
-              Entity Deleted. Undo in {undoState.counter}s
-            </Typography>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={undoDelete}
-              aria-label="Undo Delete"
-              onKeyPress={(e) => handleKeyPress(e, undoDelete)}
-            >
-              Undo
-            </Button>
-          </Box>
-        )}
+  <Box sx={styles.undoBox(undoState.position)}>
+    <Typography variant="body2" align="center">
+      Entity Deleted. Undo in {undoState.counter}s
+    </Typography>
+    <Button
+      variant="contained"
+      color="secondary"
+      onClick={undoDelete}
+      aria-label="Undo Delete"
+      onKeyPress={(e) => handleKeyPress(e, undoDelete)}
+    >
+      Undo
+    </Button>
+  </Box>
+)}
       </Container>
       <Dialog open={dialogState.delete} onClose={() => closeDialog("delete")}>
         <DialogTitle>Are you sure you want to delete this entity?</DialogTitle>
@@ -877,4 +890,3 @@ const Panel = () => {
 };
 
 export default Panel;
-

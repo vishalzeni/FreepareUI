@@ -9,9 +9,10 @@ import {
   School,
   MonetizationOn,
   Timer,
-  OndemandVideo,
   Public,
+  OndemandVideo,
 } from '@mui/icons-material';
+
 
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(20px); }
@@ -61,40 +62,40 @@ const WhyFreepare = () => {
   const cardData = [
     { 
       icon: <EmojiPeople sx={{ fontSize: 50, color: colors.icons[0], animation: `${iconAnimation} 2s infinite` }} />, 
-      title: 'User Experience', 
-      description: 'FREEPARE is designed with a user-first approach, ensuring a seamless, intuitive, and hassle-free experience. With a clean, modern interface and smooth navigation, students can focus entirely on learning without distractions, making test preparation effortless and enjoyable.' 
+      title: "User Experience", 
+      description: "FREEPARE is designed with a user-first approach, ensuring a seamless, intuitive, and hassle-free experience. With a clean, modern interface and smooth navigation, students can focus entirely on learning without distractions." 
     },
     { 
       icon: <Verified sx={{ fontSize: 50, color: colors.icons[1], animation: `${iconAnimation} 2s infinite` }} />, 
-      title: 'Quality Assurance', 
-      description: 'Every test and study material on FREEPARE is meticulously curated by subject-matter experts to maintain the highest level of accuracy and reliability. Our commitment to quality ensures that students get well-structured, up-to-date, and conceptually sound practice resources, helping them build a solid foundation for success.' 
+      title: "Quality Assurance", 
+      description: "Every test and study material on FREEPARE is meticulously curated by subject-matter experts to maintain the highest level of accuracy and reliability." 
     },
     { 
       icon: <School sx={{ fontSize: 50, color: colors.icons[2], animation: `${iconAnimation} 2s infinite` }} />, 
-      title: 'Expert Approach', 
-      description: 'FREEPARE goes beyond basic test practice by fostering deep conceptual clarity and analytical reasoning. Our expertly crafted questions challenge students to think critically, helping them develop problem-solving skills essential for competitive exams and real-world applications.' 
+      title: "Level Wise Segregation", 
+      description: "FREEPARE offers questions categorized by difficulty levels. Focus on specific difficulty levels to strengthen weak areas or test your mastery of complex topics." 
     },
     { 
       icon: <MonetizationOn sx={{ fontSize: 50, color: colors.icons[3], animation: `${iconAnimation} 2s infinite` }} />, 
-      title: 'No Sign-Up Fees', 
-      description: 'Education should be a right, not a privilege. That’s why FREEPARE offers unlimited access to all its tests, study materials, and learning resources—completely free of charge. No hidden fees, no subscriptions—just quality learning for everyone, anytime, anywhere.' 
+      title: "No Sign-Up Fees", 
+      description: "Experience pure learning with no strings attached. FREEPARE is committed to providing high-quality learning resources for free – no hidden charges, no premium subscriptions." 
     },
     { 
       icon: <Timer sx={{ fontSize: 50, color: colors.icons[4], animation: `${iconAnimation} 2s infinite` }} />, 
-      title: 'Flexible Testing Format', 
-      description: 'Not everyone learns at the same pace, and we understand that. FREEPARE provides customizable test formats, allowing students to choose difficulty levels, set timers, and practice according to their comfort. Whether you prefer quick quizzes or full-length tests, you have the freedom to learn your way.' 
+      title: "High-Quality Mock Tests", 
+      description: "FREEPARE’s mock tests are curated by experts to ensure high standards, accuracy, and relevance. Get the closest experience to the actual exams and assess your preparedness effectively." 
     },
     { 
       icon: <OndemandVideo sx={{ fontSize: 50, color: colors.icons[5], animation: `${iconAnimation} 2s infinite` }} />, 
-      title: 'Video Solutions', 
-      description: 'Struggling with complex concepts? FREEPARE offers detailed video explanations for every test, breaking down difficult topics into simple, easy-to-understand lessons. With step-by-step guidance from experts, students can master challenging subjects more effectively and retain knowledge for the long term.' 
+      title: "Regularly Updated Question Bank", 
+      description: "Stay ahead with FREEPARE’s frequently updated question bank that reflects the latest exam trends and patterns, ensuring you are always prepared for what's next." 
     },
     { 
       icon: <Public sx={{ fontSize: 50, color: colors.icons[6], animation: `${iconAnimation} 2s infinite` }} />, 
-      title: 'Global Accessibility', 
-      description: 'Education should have no boundaries. FREEPARE is accessible worldwide, empowering students from different backgrounds and regions with high-quality learning resources. No matter where you are, you can access expert-level test preparation and take a step toward academic excellence.' 
+      title: "Global Accessibility", 
+      description: "Education should have no boundaries. FREEPARE is accessible worldwide, empowering students from different backgrounds and regions with high-quality learning resources." 
     },
-  ];
+];
   
 
   return (

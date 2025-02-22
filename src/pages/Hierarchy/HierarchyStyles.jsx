@@ -127,22 +127,22 @@ export const STYLES = {
   },
   viewMoreTypography: {
     textTransform: "none",
-    fontWeight: 600, // ✅ Thoda bold for better readability
-    fontSize: "14px", // ✅ Slightly optimized font-size
-    borderRadius: "10px", // ✅ Smoother rounded edges
+    fontWeight: 500, 
+    fontSize: "14px", 
+    borderRadius: "10px", 
     textAlign: "right",
     color: COLORS.primary,
     cursor: "pointer",
-    padding: "8px 18px", // ✅ Thoda zyada padding for better click area
+    padding: "8px 18px",
     boxShadow: "none",
     border: `1px solid ${COLORS.primary}`,
-    transition: "all 0.3s ease-in-out", // ✅ Smooth hover effect
+    transition: "all 0.3s ease-in-out", 
   
     "&:hover": {
       backgroundColor: COLORS.primary,
       color: COLORS.white,
-      transform: "scale(1.06)", // ✅ Subtle lift effect
-      boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", // ✅ Light shadow on hover
+      transform: "scale(1.06)", 
+      boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
     },
   },
   

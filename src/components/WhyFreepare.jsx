@@ -76,7 +76,7 @@ const WhyFreepare = () => {
     },
     { 
       icon: <MonetizationOn sx={{ fontSize: 50, color: colors.icons[3], animation: `${iconAnimation} 2s infinite` }} />, 
-      title: 'Free of Cost', 
+      title: 'No Sign-Up Fees', 
       description: 'Education should be a right, not a privilege. That’s why FREEPARE offers unlimited access to all its tests, study materials, and learning resources—completely free of charge. No hidden fees, no subscriptions—just quality learning for everyone, anytime, anywhere.' 
     },
     { 

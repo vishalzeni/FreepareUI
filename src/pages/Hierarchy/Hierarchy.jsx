@@ -631,8 +631,8 @@ const Hierarchy = () => {
           },
         }}
       >
-        Welcome to <span style={{ fontWeight: "550" }}>FREEPARE </span> – Ace
-        Your Exams for Free!
+        Welcome to <span style={{ fontWeight: "550" }}>FREEPARE </span> – Your Gateway to
+        Free Exam Preparation
       </Typography>)}
       {currentEntity && (
         <Typography

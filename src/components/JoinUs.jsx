@@ -19,33 +19,39 @@ const JoinUs = () => {
               gutterBottom
               sx={{
                 fontWeight: "500",
-                fontSize: { xs: "1.8rem", sm: "2.2rem", md: "2.5rem" },
+                fontSize: { xs: "1.8rem", sm: "2rem", md: "2.2rem" },
                 background: "linear-gradient(90deg, #066C98, #2CACE3)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
               }}
             >
-              Free Exam Preparation
+              Choose FREEPARE – Your Path to Success. Start Practicing Today!
             </Typography>
-            <Typography
-              variant="body1"
-              paragraph
-              sx={{ color: "#555", mb: 3 }}
-            >
-              At <b>FREEPARE</b>, we are committed to providing high-quality exam
-              preparation resources completely free of charge.
+            <Typography variant="body1" paragraph sx={{ color: "#555", mb: 3 }}>
+              At <b>FREEPARE</b>, we are dedicated to empowering students with
+              high-quality exam preparation resources – absolutely free of cost.
             </Typography>
 
             {/* Features with Sparkling Star Icons ✨ */}
             <Box sx={{ mb: 3 }}>
               {[
-                "High quality exam preparation.",
+                "Mock tests designed to match real exam patterns.",
+                "Learn at your own pace, on any device.",
                 "Wide range of test categories.",
-                "No hidden charges, completely free of cost.",
-                "Free mock tests for various exams.",
+                "No hidden charges or subscriptions.",
+                "Tailored to suit a variety of competitive exams.",
+                "Instant Results and Analysis.",
+
               ].map((text, index) => (
-                <Box key={index} sx={{ display: "flex", alignItems: "center", mb: 1.5 }}>
-                  <Sparkles size={20} color="#FFA500" style={{ marginRight: "10px" }} />
+                <Box
+                  key={index}
+                  sx={{ display: "flex", alignItems: "center", mb: 1.5 }}
+                >
+                  <Sparkles
+                    size={20}
+                    color="#FFA500"
+                    style={{ marginRight: "10px" }}
+                  />
                   <Typography variant="body1">{text}</Typography>
                 </Box>
               ))}
@@ -74,7 +80,7 @@ const JoinUs = () => {
               src={img}
               alt="Join Us"
               sx={{
-                width: { xs: "100%", sm: "90%", md: "80%" },
+                width: "100%",
                 mx: "auto",
                 display: "block",
               }}

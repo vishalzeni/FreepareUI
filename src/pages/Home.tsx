@@ -18,8 +18,7 @@ const Home = () => {
       >
         <Box
           sx={{
-            background:
-              "linear-gradient(to bottom,rgb(255, 255, 255), #e3f2fd)",
+            background: "linear-gradient(to bottom,rgb(251, 253, 255) 0%, #e3f2fd 100%)",
           }}
         >
           <Navbar />

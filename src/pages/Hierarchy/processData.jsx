@@ -6,8 +6,8 @@ export const processData = (examData) => {
   // Convert bold markdown (**dd**) to <b> tag
   examData = examData.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>");
 
-  // Convert italic markdown (*) to <i> tag
-  examData = examData.replace(/\*(.*?)\*/g, "<i>$1</i>");
+  // Convert italic markdown ($text$) to <i> tag
+  examData = examData.replace(/\$(.*?)\$/g, "<i>$1</i>");
 
   // Convert tilde markdown (~text~) to <u> tag for underline
   examData = examData.replace(/~(.*?)~/g, "<u>$1</u>");

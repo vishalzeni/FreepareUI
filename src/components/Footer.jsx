@@ -24,7 +24,7 @@ const Footer = () => {
               sx={{
                 mb: 2,
                 textAlign: "center",
-                background: 'linear-gradient(90deg, #066C98, #2CACE3)',
+                background: `linear-gradient(90deg,rgb(240, 82, 161) 30%, #FFD700 100%)`,          
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 fontWeight: 500,                fontSize: "1.5rem",

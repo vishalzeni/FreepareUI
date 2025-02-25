@@ -87,7 +87,7 @@ const WhyFreepare = () => {
     },
     { 
       icon: <OndemandVideo sx={{ fontSize: 50, color: colors.icons[5], animation: `${iconAnimation} 2s infinite` }} />, 
-      title: "Regularly Updated Question Bank", 
+      title: "Updated Question Bank", 
       description: "Stay ahead with FREEPARE’s frequently updated question bank that reflects the latest exam trends and patterns, ensuring you are always prepared for what's next." 
     },
     { 
@@ -107,7 +107,7 @@ const WhyFreepare = () => {
         sx={{
           fontWeight: '500',
           fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.5rem' },
-          background: 'linear-gradient(90deg, #066C98, #2CACE3)',
+          background: `linear-gradient(90deg,rgb(240, 82, 161) 30%, #FFD700 100%)`,          
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           mb: 2,
@@ -143,7 +143,9 @@ const WhyFreepare = () => {
                   <Typography
                     variant="h4"
                     gutterBottom
-                    sx={{ fontWeight: 600, color: colors.primary, mb: 2, textAlign: 'center', fontSize: '1.3rem' }}
+                    sx={{ fontWeight: 600,  background: `linear-gradient(90deg,rgb(240, 82, 161) 30%, #FFD700 100%)`,          
+                      WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent", mb: 2, textAlign: 'center', fontSize: '1.3rem' }}
                   >
                     {card.title}
                   </Typography>
@@ -155,7 +157,7 @@ const WhyFreepare = () => {
                       overflow: 'hidden', // Added ellipsis for text overflow
                       textOverflow: 'ellipsis',
                       display: '-webkit-box',
-                      WebkitLineClamp: 7,
+                      WebkitLineClamp: 4,
                       WebkitBoxOrient: 'vertical',
                     }}
                   >

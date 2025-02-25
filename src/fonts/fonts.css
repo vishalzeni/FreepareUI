@@ -1,0 +1,27 @@
+
+@font-face {
+    font-family: 'Palatino Linotype';
+    src: url('./palatinolinotype_roman.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Palatino Linotype';
+    src: url('./palatinolinotype_bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Palatino Linotype';
+    src: url('./palatinolinotype_italic.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+  }
+  @font-face {
+    font-family: 'Palatino Linotype';
+    src: url('./palatinolinotype_bolditalic.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+  }

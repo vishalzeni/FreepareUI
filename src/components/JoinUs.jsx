@@ -20,7 +20,7 @@ const JoinUs = () => {
               sx={{
                 fontWeight: "500",
                 fontSize: { xs: "1.8rem", sm: "2rem", md: "2.2rem" },
-                background: "linear-gradient(90deg, #066C98, #2CACE3)",
+                background: `linear-gradient(90deg,rgb(240, 82, 161) 30%, #FFD700 100%)`,          
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
               }}
@@ -63,6 +63,7 @@ const JoinUs = () => {
               size="large"
               onClick={handleButtonClick}
               sx={{
+                
                 textTransform: "none",
                 fontSize: "16px",
                 px: 3,

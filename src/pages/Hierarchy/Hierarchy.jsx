@@ -591,746 +591,789 @@ const Hierarchy = () => {
     );
   }
   return (
-    <Grid sx={{
-      maxWidth: "lg",
-      margin: "0 auto",
-    }}>
-    <Box
+    <Grid
       sx={{
-        padding: "30px",
-        height: "auto",
-        position: "relative",
+        maxWidth: "lg",
+        margin: "0 auto",
       }}
     >
-      {path.length > 0 && (
-        <IconButton
-          onClick={handleBackClick}
-          disabled={path.length === 0}
-          sx={STYLES.iconButton}
-          aria-label="Go back to the previous level"
-        >
-          <ArrowBack />
-        </IconButton>
-      )}
-      {path.length === 0 && (
-<Typography
-        variant="h1"
-        align="center"
+      <Box
         sx={{
-          mb: 3,
-          background: `linear-gradient(90deg,rgb(240, 82, 161) 30%, #FFD700 100%)`,          
-          WebkitBackgroundClip: "text",
-WebkitTextFillColor: "transparent",
-          padding: "10px",
-          borderRadius: "8px",
-          fontWeight: "500",
-          fontSize: {
-            xs: "1.6rem", // For extra small screens (phones)
-            sm: "1.8rem", // For small screens (tablets)
-            md: "2.2rem", // For medium screens (laptops)
-          },
+          padding: "30px",
+          height: "auto",
+          position: "relative",
         }}
       >
-        Welcome to <span style={{ fontWeight: "550" }}>FREEPARE </span> – Your Gateway to
-        Free Exam Preparation
-      </Typography>)}
-      {currentEntity && (
-        <Typography
-          variant="h2"
-          sx={{
-            fontWeight: "500",
-            background: `linear-gradient(90deg, ${COLORS.primary}, ${COLORS.secondary})`,
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            mb: 4,
-            textAlign: "center",
-            padding: "10px",
-            borderRadius: "8px",
-            fontSize: {
-              xs: "1.6rem",
-              sm: "1.8rem",
-              md: "2.2rem",
-            },
-          }}
-        >
-          {currentEntity.name}
-        </Typography>
-      )}
-
-      
-
-      {showSearch && (
-        <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
-          <TextField
-            label="Search"
-            variant="outlined"
-            value={searchQuery}
-            onChange={handleSearchChange}
-            sx={STYLES.searchBox}
-            InputLabelProps={{
-              shrink: true,
+        {path.length > 0 && (
+          <IconButton
+            onClick={handleBackClick}
+            disabled={path.length === 0}
+            sx={STYLES.iconButton}
+            aria-label="Go back to the previous level"
+          >
+            <ArrowBack style={{ fontSize: "1.8rem" }} />
+          </IconButton>
+        )}
+        {path.length === 0 && (
+          <Typography
+            variant="h1"
+            align="center"
+            sx={{
+              mb: 3,
+              background: `linear-gradient(90deg,rgb(240, 82, 161) 30%, #FFD700 100%)`,
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              padding: "10px",
+              borderRadius: "8px",
+              fontWeight: "500",
+              fontSize: {
+                xs: "1.6rem", // For extra small screens (phones)
+                sm: "1.8rem", // For small screens (tablets)
+                md: "2.2rem", // For medium screens (laptops)
+              },
             }}
-            aria-label="Search"
-            placeholder="Search here..."
-          />
-        </Box>
-      )}
+          >
+            Welcome to <span style={{ fontWeight: "550" }}>FREEPARE </span> –
+            Your Gateway to Free Exam Preparation
+          </Typography>
+        )}
+        {currentEntity && (
+          <Typography
+            variant="h2"
+            sx={{
+              fontWeight: "500",
+              background: `linear-gradient(90deg,rgb(240, 82, 161) 30%, #FFD700 100%)`,
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              mb: 4,
+              textAlign: "center",
+              padding: "10px",
+              borderRadius: "8px",
+              fontSize: {
+                xs: "1.6rem",
+                sm: "1.8rem",
+                md: "2.2rem",
+              },
+            }}
+          >
+            {currentEntity.name}
+          </Typography>
+        )}
 
-      {searchQuery && filteredEntities.length === 0 && (
-        <Typography
-          variant="h6"
-          sx={{ color: COLORS.grey, textAlign: "center" }}
-        >
-          No results found for "{searchQuery}".
-        </Typography>
-      )}
-
-      {currentEntity &&
-        currentEntity.type === "topic" &&
-        currentEntity.children && (
-          <Box sx={{ mt: 4 }}>
-            {currentEntity.children.map((paper, index) => (
-              <Box
-                key={paper.id}
-                sx={{ mb: 2, display: "flex", alignItems: "center" }}
-              >
-                {/* Serial Number */}
-                <Box sx={STYLES.serialNumberBox}>
-                  <Typography variant="h3" sx={STYLES.serialNumberTypography}>
-                    {index + 1}.
-                  </Typography>
-                </Box>
-
-                {examData[paper.name] && (
-                  <Card
-                    sx={{
-                      width: "100%", // Make the card full width
-                      padding: 2,
-                      boxShadow: 2,
-                      borderRadius: 2,
-                      overflow: "hidden",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      backgroundColor: testCompleted[paper.testName]
-                        ? COLORS.green
-                        : COLORS.white, // Green background for completed
-
-                      "@media (max-width:600px)": {
-                        flexDirection: "column",
-                        gap: 1,
-                      },
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        width: "100%",
-                      }}
-                    >
-                      {/* Test Name */}
-                      <Typography
-                        variant="h3"
-                        sx={{
-                          fontWeight: "500",
-                          color: testCompleted[paper.testName]
-                            ? COLORS.white
-                            : COLORS.black, // Text color changes
-                          overflow: "hidden", // Required for ellipsis
-                          textOverflow: "ellipsis", // Adds the ellipsis when text overflows
-                          whiteSpace: "nowrap", // Prevents wrapping of text
-                          textTransform: "capitalize",
-                          fontSize: {
-                            xs: "0.875rem",
-                            sm: "1rem",
-                            md: "1.25rem",
-                          }, // Responsive font sizes
-
-                          // Ensure consistent behavior
-                          maxWidth: "50ch", // Limit text to around 50 characters on larger screens
-                          "@media (max-width:600px)": {
-                            maxWidth: "30ch", // Limit text to 30 characters on smaller screens
-                          },
-                        }}
-                      >
-                        {paper.testName}
-                      </Typography>
-                    </Box>
-
-                    {!testCompleted[paper.testName] ? (
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() =>
-                          handleStartTestClick(
-                            examData[paper.name].examId,
-                            paper.testName
-                          )
-                        }
-                        disabled={testCompleted[paper.testName]} // Disable button for completed tests
-                        sx={STYLES.button}
-                      >
-                        Start Test
-                      </Button>
-                    ) : (
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: { xs: 1, sm: 2 },
-                          flexDirection: { xs: "column", sm: "row" },
-                        }}
-                      >
-                        <Box>
-                          {paper.videoLink && (
-                            <Button
-                              variant="contained"
-                              component="a"
-                              href={paper.videoLink}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              startIcon={
-                                <YouTubeIcon sx={{ color: COLORS.red }} />
-                              }
-                              sx={STYLES.solutionButton}
-                            >
-                              Solution
-                            </Button>
-                          )}
-                        </Box>
-                        <Button
-                          variant="contained"
-                          onClick={() => handleVisibilityClick(paper.name)}
-                          startIcon={
-                            <VisibilityIcon
-                              sx={{
-                                color: "inherit",
-                              }}
-                            />
-                          }
-                          sx={STYLES.previewButton}
-                        >
-                          PREVIEW
-                        </Button>
-                      </Box>
-                    )}
-                    <Dialog
-                      open={openDialog}
-                      onClose={() => setOpenDialog(false)}
-                      BackdropProps={{
-                        style: {
-                          backgroundColor: "rgba(28, 28, 28, 0.4)", // Backdrop ka color aur transparency
-                        },
-                      }}
-                      maxWidth="lg"
-                    >
-                      <DialogTitle sx={STYLES.dialogTitle}>
-                        Submitted Response
-                      </DialogTitle>
-                      <DialogContent sx={STYLES.dialogContent}>
-                        {loading ? (
-                          <CircularProgress size={24} />
-                        ) : (
-                          <>
-                            {/* Display Exam Data */}
-                            <Typography
-                              sx={{
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                fontWeight: 500,
-                                color: COLORS.primary,
-                                fontSize: "1.2rem",
-                                marginBottom: "1rem",
-                              }}
-                            >
-                              {userData?.exam?.examName ||
-                                "Exam name not available"}
-                            </Typography>
-
-                            {/* Exam Questions Section */}
-                            {userData?.exam?.questions?.length > 0 ? (
-                              <Grid container spacing={2}>
-                                {userData.exam.questions.map(
-                                  (question, index) => {
-                                    const questionKey =
-                                      question.questionNo.replace("QQ", ""); // This removes the "QQ" part from questionNo
-                                    const userAnswer =
-                                      userData.user.answers[questionKey]; // Use the generated questionKey to fetch the user answer
-
-                                    return (
-                                      <Grid item xs={12} key={index}>
-                                        <Card
-                                          sx={{
-                                            padding: "1.5rem",
-                                            marginBottom: "1.5rem",
-                                            borderRadius: "12px",
-                                            border: "1px solid #ddd",
-                                            backgroundColor: COLORS.white,
-                                            boxShadow: 3,
-
-                                            transition: "all 0.3s ease",
-                                          }}
-                                        >
-                                          <Typography
-                                            variant="h3"
-                                            sx={{
-                                              fontWeight: "500",
-                                              color: COLORS.black,
-                                              marginBottom: "1rem",
-                                              display: "flex",
-                                            }}
-                                          >
-                                            <strong>
-                                              {question.questionNo}:
-                                            </strong>
-                                            {question.questionText && (
-                                              <span
-                                                style={{
-                                                  marginBottom:
-                                                    question.questionImage
-                                                      ? "4rem"
-                                                      : "0", // Conditional margin
-                                                  flexGrow: 1,
-                                                  marginLeft: "1rem",
-                                                  marginRight: "1rem",
-                                                }}
-                                                dangerouslySetInnerHTML={{
-                                                  __html: processData(
-                                                    question.questionText
-                                                  ),
-                                                }}
-                                              />
-                                            )}
-                                          </Typography>
-
-                                          {/* Conditionally render the question image if available */}
-                                          {question.questionImage && (
-                                            <Box sx={{ marginBottom: "1rem" }}>
-                                              <img
-                                                src={question.questionImage}
-                                                alt={`Question ${question.questionNo}`}
-                                                style={{
-                                                  width: "80%",
-                                                  maxHeight: "300px",
-                                                  objectFit: "contain",
-                                                  display: "block",
-                                                  margin: "0 40px",
-                                                  marginTop: "-40px",
-                                                }}
-                                              />
-                                            </Box>
-                                          )}
-
-                                          {/* Render the options */}
-                                          <FormControl
-                                            component="fieldset"
-                                            sx={{ marginTop: "1rem" }}
-                                          >
-                                            <RadioGroup>
-                                              {["A", "B", "C", "D"].map(
-                                                (option, i) => {
-                                                  const optionKey = `option${option}`; // e.g., optionA, optionB, etc.
-                                                  const isSelected =
-                                                    userAnswer === option; // Check if this option matches the user's answer
-                                                  const isDisabled = userAnswer
-                                                    ? true
-                                                    : false; // Disable all options once selected
-
-                                                  return (
-                                                    <FormControlLabel
-                                                      key={i}
-                                                      value={option}
-                                                      control={
-                                                        <Radio
-                                                          disabled={isDisabled} // Disable all options once selected
-                                                          checked={isSelected} // Mark the selected option as checked
-                                                        />
-                                                      }
-                                                      label={
-                                                        <Box
-                                                          sx={{
-                                                            display: "flex",
-                                                            alignItems:
-                                                              "center",
-                                                            justifyContent:
-                                                              "space-between",
-                                                            width: "100%",
-                                                            padding: "10px 0",
-                                                          }}
-                                                        >
-                                                          <Typography
-                                                            sx={{
-                                                              marginRight:
-                                                                "10px",
-                                                              marginLeft: "0px",
-                                                              flexGrow: 1,
-                                                              fontWeight: "600",
-                                                            }}
-                                                          >
-                                                            {option}:
-                                                          </Typography>
-
-                                                          <Typography
-                                                            sx={{
-                                                              color:
-                                                                COLORS.darkGrey,
-                                                            }}
-                                                          >
-                                                            {
-                                                              question[
-                                                                optionKey
-                                                              ]
-                                                            }{" "}
-                                                            {/* Display the option text */}
-                                                          </Typography>
-
-                                                          {/* Conditionally render the option image if available */}
-                                                          {question[
-                                                            `option${option}Image`
-                                                          ] && (
-                                                            <Box
-                                                              sx={{
-                                                                marginLeft:
-                                                                  "10px",
-                                                              }}
-                                                            >
-                                                              <img
-                                                                src={
-                                                                  question[
-                                                                    `option${option}Image`
-                                                                  ]
-                                                                }
-                                                                alt={`Option ${option}`}
-                                                                style={{
-                                                                  width: "40px",
-                                                                  height:
-                                                                    "40px",
-                                                                  objectFit:
-                                                                    "cover",
-                                                                }}
-                                                              />
-                                                            </Box>
-                                                          )}
-                                                        </Box>
-                                                      }
-                                                    />
-                                                  );
-                                                }
-                                              )}
-                                            </RadioGroup>
-                                          </FormControl>
-                                          {question.correctAnswer && (
-                                            <Typography
-                                              sx={{
-                                                marginTop: "1rem",
-                                                color: COLORS.success,
-                                                fontStyle: "italic",
-                                              }}
-                                            >
-                                              Correct Answer:{" "}
-                                              <strong>
-                                                {question.correctAnswer}
-                                              </strong>
-                                            </Typography>
-                                          )}
-
-                                          {(question.explanation ||
-                                            question.explanationImage) && (
-                                            <Box
-                                              sx={{
-                                                marginTop: "1rem",
-                                                display: "flex",
-                                              }}
-                                            >
-                                              <>
-                                                <Typography
-                                                  sx={{
-                                                    fontWeight: "600",
-                                                    color: "grey",
-                                                  }}
-                                                >
-                                                  Explanation:
-                                                </Typography>
-                                                {question.explanation && (
-                                                  <Typography
-                                                    sx={{
-                                                      fontStyle: "italic",
-                                                      color: COLORS.darkGrey,
-                                                      marginBottom: "0.5rem",
-                                                    }}
-                                                  >
-                                                    {question.explanation}
-                                                  </Typography>
-                                                )}
-                                              </>
-
-                                              {question.explanationImage && (
-                                                <Box>
-                                                  <img
-                                                    src={
-                                                      question.explanationImage
-                                                    }
-                                                    alt={`Explanation for ${question.questionNo}`}
-                                                    style={{
-                                                      width: "100%",
-                                                      maxHeight: "300px",
-                                                      objectFit: "contain",
-                                                    }}
-                                                  />
-                                                </Box>
-                                              )}
-                                            </Box>
-                                          )}
-                                        </Card>
-                                      </Grid>
-                                    );
-                                  }
-                                )}
-                              </Grid>
-                            ) : (
-                              <Typography
-                                variant="body2"
-                                sx={{ color: COLORS.darkGrey }}
-                              >
-                                No questions available for this exam.
-                              </Typography>
-                            )}
-                          </>
-                        )}
-                      </DialogContent>
-                      <DialogActions>
-                        <Button
-                          onClick={() => setOpenDialog(false)}
-                          color="primary"
-                        >
-                          Close
-                        </Button>
-                      </DialogActions>
-                    </Dialog>
-                  </Card>
-                )}
-              </Box>
-            ))}
-            {/* Additional Info Dialog */}
-            <AdditionalInfoDialog
-              open={isDialogOpen}
-              onClose={() => setIsDialogOpen(false)}
-              additionalInfo={additionalInfo}
-              handleAdditionalInfoChange={(e) =>
-                setAdditionalInfo({
-                  ...additionalInfo,
-                  [e.target.name]: e.target.value,
-                })
-              }
-              handleAddInfoSubmit={handleAddInfoSubmit}
+        {showSearch && (
+          <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
+            <TextField
+              label="Search"
+              variant="outlined"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              sx={STYLES.searchBox}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              aria-label="Search"
+              placeholder="Search here..."
             />
           </Box>
         )}
 
-      {/* Render cards only when the current entity is not a topic */}
-      {!(currentEntity && currentEntity.type === "topic") && (
-        <Grid container spacing={3}>
-          {filteredEntities.map((entity) => (
-            <Grid item key={entity.id} xs={12} sm={6} md={6} lg={4}>
-              <Card
-                sx={
-                STYLES.card
-                }
-                onClick={() => navigateTo(entity)}
-                aria-label={`Navigate to ${entity.name}`}
-              >
-                <Typography
-                  variant="h3"
-                  sx={STYLES.typography}
-                  onClick={() => navigateTo(entity)}
-                >
-                  {entity.name}
-                </Typography>
+        {searchQuery && filteredEntities.length === 0 && (
+          <Typography
+            variant="h6"
+            sx={{ color: COLORS.grey, textAlign: "center" }}
+          >
+            No results found for "{searchQuery}".
+          </Typography>
+        )}
 
-                {!(currentEntity && currentEntity.type === "subject") && !(
-                    currentEntity &&
-                    currentEntity.children?.some(
-                      (child) => child.type === "topic"
-                    )
-                  ) &&
-                  entity.children && (
-                    <Box  sx={{
-                      mt:
-                        entity.children.length === 1
-                          ? "-75px"
-                          : entity.children.length === 2
-                          ? "-50px"
-                          : entity.children.length === 3
-                          ? "-20px"
-                          : "10px",
-                    }}>
-                      {entity.children.slice(0, 4).map((child) => (
+        {currentEntity &&
+          currentEntity.type === "topic" &&
+          currentEntity.children && (
+            <Box sx={{ mt: 4 }}>
+              {currentEntity.children.map((paper, index) => (
+                <Box
+                  key={paper.id}
+                  sx={{ mb: 2, display: "flex", alignItems: "center" }}
+                >
+                  {/* Serial Number */}
+                  <Box sx={STYLES.serialNumberBox}>
+                    <Typography variant="h3" sx={STYLES.serialNumberTypography}>
+                      {index + 1}.
+                    </Typography>
+                  </Box>
+
+                  {examData[paper.name] && (
+                    <Card
+                      sx={{
+                        width: "100%", // Make the card full width
+                        padding: 2,
+                        boxShadow: 2,
+                        borderRadius: 2,
+                        overflow: "hidden",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        backgroundColor: testCompleted[paper.testName]
+                          ? COLORS.green
+                          : COLORS.white, // Green background for completed
+
+                        "@media (max-width:600px)": {
+                          flexDirection: "column",
+                          gap: 1,
+                        },
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          width: "100%",
+                        }}
+                      >
+                        {/* Test Name */}
                         <Typography
-                          key={child.id}
-                          variant="h4"
+                          variant="h3"
                           sx={{
-                            color: COLORS.darkGrey,
-                            mb: 1,
                             fontWeight: "500",
+                            color: testCompleted[paper.testName]
+                              ? COLORS.white
+                              : COLORS.black, // Text color changes
+                            overflow: "hidden", // Required for ellipsis
+                            textOverflow: "ellipsis", // Adds the ellipsis when text overflows
+                            whiteSpace: "nowrap", // Prevents wrapping of text
+                            textTransform: "capitalize",
+                            fontSize: {
+                              xs: "0.875rem",
+                              sm: "1rem",
+                              md: "1.25rem",
+                            }, // Responsive font sizes
+
+                            // Ensure consistent behavior
+                            maxWidth: "50ch", // Limit text to around 50 characters on larger screens
+                            "@media (max-width:600px)": {
+                              maxWidth: "30ch", // Limit text to 30 characters on smaller screens
+                            },
                           }}
                         >
-                          • {child.name}
+                          {paper.testName}
                         </Typography>
-                      ))}
-                    </Box>
-                  )}
+                      </Box>
 
-                {/* Only show points under the Exam and subjects */}
-                {!(currentEntity && currentEntity.type === "subject") &&
-                  entity.children && (
-                    <Box sx={{ mt: 2 }}>
-                      {!(currentEntity && currentEntity.type === "exam") && (
+                      {!testCompleted[paper.testName] ? (
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={() =>
+                            handleStartTestClick(
+                              examData[paper.name].examId,
+                              paper.testName
+                            )
+                          }
+                          disabled={testCompleted[paper.testName]} // Disable button for completed tests
+                          sx={STYLES.button}
+                        >
+                          Start Test
+                        </Button>
+                      ) : (
                         <Box
                           sx={{
                             display: "flex",
-                            justifyContent: "flex-end", // Align to the right
+                            alignItems: "center",
+                            gap: { xs: 1, sm: 2 },
+                            flexDirection: { xs: "column", sm: "row" },
                           }}
                         >
-                          <Typography
-                            variant="button"
-                            component="span"
-                            sx={STYLES.viewMoreTypography}
-                            onClick={() => navigateTo(entity)}
+                          <Box>
+                            {paper.videoLink && (
+                              <Button
+                                variant="contained"
+                                component="a"
+                                href={paper.videoLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                startIcon={
+                                  <YouTubeIcon sx={{ color: COLORS.red }} />
+                                }
+                                sx={STYLES.solutionButton}
+                              >
+                                Solution
+                              </Button>
+                            )}
+                          </Box>
+                          <Button
+                            variant="contained"
+                            onClick={() => handleVisibilityClick(paper.name)}
+                            startIcon={
+                              <VisibilityIcon
+                                sx={{
+                                  color: "inherit",
+                                }}
+                              />
+                            }
+                            sx={STYLES.previewButton}
                           >
-                            ...View More
-                          </Typography>
+                            PREVIEW
+                          </Button>
                         </Box>
                       )}
-                      {/* totalTests */}
-                      {!(currentEntity && currentEntity.type === "exam") &&
-                        entity.totalTests && (
+                      <Dialog
+                        open={openDialog}
+                        onClose={() => setOpenDialog(false)}
+                        BackdropProps={{
+                          style: {
+                            backgroundColor: "rgba(28, 28, 28, 0.4)", // Backdrop ka color aur transparency
+                          },
+                        }}
+                        maxWidth="lg"
+                      >
+                        <DialogTitle sx={STYLES.dialogTitle}>
+                          Submitted Response
+                        </DialogTitle>
+                        <DialogContent sx={STYLES.dialogContent}>
+                          {loading ? (
+                            <CircularProgress size={24} />
+                          ) : (
+                            <>
+                              {/* Display Exam Data */}
+                              <Typography
+                                sx={{
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                  fontWeight: 500,
+                                  color: COLORS.primary,
+                                  fontSize: "1.2rem",
+                                  marginBottom: "1rem",
+                                }}
+                              >
+                                {userData?.exam?.examName ||
+                                  "Exam name not available"}
+                              </Typography>
+
+                              {/* Exam Questions Section */}
+                              {userData?.exam?.questions?.length > 0 ? (
+                                <Grid container spacing={2}>
+                                  {userData.exam.questions.map(
+                                    (question, index) => {
+                                      const questionKey =
+                                        question.questionNo.replace("QQ", ""); // This removes the "QQ" part from questionNo
+                                      const userAnswer =
+                                        userData.user.answers[questionKey]; // Use the generated questionKey to fetch the user answer
+
+                                      return (
+                                        <Grid item xs={12} key={index}>
+                                          <Card
+                                            sx={{
+                                              padding: "1.5rem",
+                                              marginBottom: "1.5rem",
+                                              borderRadius: "12px",
+                                              border: "1px solid #ddd",
+                                              backgroundColor: COLORS.white,
+                                              boxShadow: 3,
+
+                                              transition: "all 0.3s ease",
+                                            }}
+                                          >
+                                            <Typography
+                                              variant="h3"
+                                              sx={{
+                                                fontWeight: "500",
+                                                color: COLORS.black,
+                                                marginBottom: "1rem",
+                                                display: "flex",
+                                              }}
+                                            >
+                                              <strong>
+                                                {question.questionNo}:
+                                              </strong>
+                                              {question.questionText && (
+                                                <span
+                                                  style={{
+                                                    marginBottom:
+                                                      question.questionImage
+                                                        ? "4rem"
+                                                        : "0", // Conditional margin
+                                                    flexGrow: 1,
+                                                    marginLeft: "1rem",
+                                                    marginRight: "1rem",
+                                                  }}
+                                                  dangerouslySetInnerHTML={{
+                                                    __html: processData(
+                                                      question.questionText
+                                                    ),
+                                                  }}
+                                                />
+                                              )}
+                                            </Typography>
+
+                                            {/* Conditionally render the question image if available */}
+                                            {question.questionImage && (
+                                              <Box
+                                                sx={{ marginBottom: "1rem" }}
+                                              >
+                                                <img
+                                                  src={question.questionImage}
+                                                  alt={`Question ${question.questionNo}`}
+                                                  style={{
+                                                    width: "80%",
+                                                    maxHeight: "300px",
+                                                    objectFit: "contain",
+                                                    display: "block",
+                                                    margin: "0 40px",
+                                                    marginTop: "-40px",
+                                                  }}
+                                                />
+                                              </Box>
+                                            )}
+
+                                            {/* Render the options */}
+                                            <FormControl
+                                              component="fieldset"
+                                              sx={{ marginTop: "1rem" }}
+                                            >
+                                              <RadioGroup>
+                                                {["A", "B", "C", "D"].map(
+                                                  (option, i) => {
+                                                    const optionKey = `option${option}`; // e.g., optionA, optionB, etc.
+                                                    const isSelected =
+                                                      userAnswer === option; // Check if this option matches the user's answer
+                                                    const isDisabled =
+                                                      userAnswer ? true : false; // Disable all options once selected
+
+                                                    return (
+                                                      <FormControlLabel
+                                                        key={i}
+                                                        value={option}
+                                                        control={
+                                                          <Radio
+                                                            disabled={
+                                                              isDisabled
+                                                            } // Disable all options once selected
+                                                            checked={isSelected} // Mark the selected option as checked
+                                                          />
+                                                        }
+                                                        label={
+                                                          <Box
+                                                            sx={{
+                                                              display: "flex",
+                                                              alignItems:
+                                                                "center",
+                                                              justifyContent:
+                                                                "space-between",
+                                                              width: "100%",
+                                                              padding: "10px 0",
+                                                            }}
+                                                          >
+                                                            <Typography
+                                                              sx={{
+                                                                marginRight:
+                                                                  "10px",
+                                                                marginLeft:
+                                                                  "0px",
+                                                                flexGrow: 1,
+                                                                fontWeight:
+                                                                  "600",
+                                                              }}
+                                                            >
+                                                              {option}:
+                                                            </Typography>
+
+                                                            <Typography
+                                                              sx={{
+                                                                color:
+                                                                  COLORS.darkGrey,
+                                                              }}
+                                                            >
+                                                              {
+                                                                question[
+                                                                  optionKey
+                                                                ]
+                                                              }{" "}
+                                                              {/* Display the option text */}
+                                                            </Typography>
+
+                                                            {/* Conditionally render the option image if available */}
+                                                            {question[
+                                                              `option${option}Image`
+                                                            ] && (
+                                                              <Box
+                                                                sx={{
+                                                                  marginLeft:
+                                                                    "10px",
+                                                                }}
+                                                              >
+                                                                <img
+                                                                  src={
+                                                                    question[
+                                                                      `option${option}Image`
+                                                                    ]
+                                                                  }
+                                                                  alt={`Option ${option}`}
+                                                                  style={{
+                                                                    width:
+                                                                      "40px",
+                                                                    height:
+                                                                      "40px",
+                                                                    objectFit:
+                                                                      "cover",
+                                                                  }}
+                                                                />
+                                                              </Box>
+                                                            )}
+                                                          </Box>
+                                                        }
+                                                      />
+                                                    );
+                                                  }
+                                                )}
+                                              </RadioGroup>
+                                            </FormControl>
+                                            {question.correctAnswer && (
+                                              <Typography
+                                                sx={{
+                                                  marginTop: "1rem",
+                                                  color: COLORS.success,
+                                                  fontStyle: "italic",
+                                                }}
+                                              >
+                                                Correct Answer:{" "}
+                                                <strong>
+                                                  {question.correctAnswer}
+                                                </strong>
+                                              </Typography>
+                                            )}
+
+                                            {(question.explanation ||
+                                              question.explanationImage) && (
+                                              <Box
+                                                sx={{
+                                                  marginTop: "1rem",
+                                                  display: "flex",
+                                                }}
+                                              >
+                                                <>
+                                                  <Typography
+                                                    sx={{
+                                                      fontWeight: "600",
+                                                      color: "grey",
+                                                    }}
+                                                  >
+                                                    Explanation:
+                                                  </Typography>
+                                                  {question.explanation && (
+                                                    <Typography
+                                                      sx={{
+                                                        fontStyle: "italic",
+                                                        color: COLORS.darkGrey,
+                                                        marginBottom: "0.5rem",
+                                                      }}
+                                                    >
+                                                      {question.explanation}
+                                                    </Typography>
+                                                  )}
+                                                </>
+
+                                                {question.explanationImage && (
+                                                  <Box>
+                                                    <img
+                                                      src={
+                                                        question.explanationImage
+                                                      }
+                                                      alt={`Explanation for ${question.questionNo}`}
+                                                      style={{
+                                                        width: "100%",
+                                                        maxHeight: "300px",
+                                                        objectFit: "contain",
+                                                      }}
+                                                    />
+                                                  </Box>
+                                                )}
+                                              </Box>
+                                            )}
+                                          </Card>
+                                        </Grid>
+                                      );
+                                    }
+                                  )}
+                                </Grid>
+                              ) : (
+                                <Typography
+                                  variant="body2"
+                                  sx={{ color: COLORS.darkGrey }}
+                                >
+                                  No questions available for this exam.
+                                </Typography>
+                              )}
+                            </>
+                          )}
+                        </DialogContent>
+                        <DialogActions>
+                          <Button
+                            onClick={() => setOpenDialog(false)}
+                            color="primary"
+                          >
+                            Close
+                          </Button>
+                        </DialogActions>
+                      </Dialog>
+                    </Card>
+                  )}
+                </Box>
+              ))}
+              {/* Additional Info Dialog */}
+              <AdditionalInfoDialog
+                open={isDialogOpen}
+                onClose={() => setIsDialogOpen(false)}
+                additionalInfo={additionalInfo}
+                handleAdditionalInfoChange={(e) =>
+                  setAdditionalInfo({
+                    ...additionalInfo,
+                    [e.target.name]: e.target.value,
+                  })
+                }
+                handleAddInfoSubmit={handleAddInfoSubmit}
+              />
+            </Box>
+          )}
+
+        {/* Render cards only when the current entity is not a topic */}
+        {!(currentEntity && currentEntity.type === "topic") && (
+          <Grid container spacing={3}>
+            {filteredEntities.map((entity) => (
+              <Grid item key={entity.id} xs={12} sm={6} md={6} lg={4}>
+                <Card
+                  sx={STYLES.card}
+                  onClick={() => navigateTo(entity)}
+                  aria-label={`Navigate to ${entity.name}`}
+                >
+                  <Typography
+                    variant="h3"
+                    sx={STYLES.typography}
+                    onClick={() => navigateTo(entity)}
+                  >
+                    {entity.name}
+                  </Typography>
+
+                  {!(currentEntity && currentEntity.type === "subject") &&
+                    !(
+                      currentEntity &&
+                      currentEntity.children?.some(
+                        (child) => child.type === "topic"
+                      )
+                    ) &&
+                    entity.children && (
+                      <Box
+                        sx={{
+                          mt:
+                            entity.children.length === 1
+                              ? "-75px"
+                              : entity.children.length === 2
+                              ? "-50px"
+                              : entity.children.length === 3
+                              ? "-20px"
+                              : "10px",
+                        }}
+                      >
+                        {entity.children.slice(0, 4).map((child) => (
+                          <Typography
+                            key={child.id}
+                            variant="h4"
+                            sx={{
+                              color: COLORS.darkGrey,
+                              mb: 1,
+                              fontWeight: "500",
+                            }}
+                          >
+                            • {child.name}
+                          </Typography>
+                        ))}
+                      </Box>
+                    )}
+
+                  {/* Only show points under the Exam and subjects */}
+                  {!(currentEntity && currentEntity.type === "subject") &&
+                    entity.children && (
+                      <Box sx={{ mt: 2 }}>
+                        {!(currentEntity && currentEntity.type === "exam") && (
                           <Box
-                            sx={{ display: "flex", gap: 1, marginTop: "-30px" }}
+                            sx={{
+                              display: "flex",
+                              justifyContent: "flex-end", // Align to the right
+                            }}
                           >
                             <Typography
-                              variant="body1"
-                              sx={{
-                                color: COLORS.black,
-                                fontWeight: 600,
-                                whiteSpace: "nowrap", // Prevent text from wrapping to the next line
-                                overflow: "hidden", // Hide overflowed text
-                                textOverflow: "ellipsis", // Show ellipsis when text overflows
-                                width: "100%", // Default width to take full space
-                                // Apply 40px width and ellipsis on small screens only
-                                "@media (max-width: 820px)": {
-                                  width: "180px", // Set the width to 40px for small screens
-                                },
-                                "@media (max-width: 770px)": {
-                                  width: "160px", // Set the width to 40px for small screens
-                                },
-                                "@media (max-width: 700px)": {
-                                  width: "140px", // Set the width to 40px for small screens
-                                },
-                              }}
+                              variant="button"
+                              component="span"
+                              sx={STYLES.viewMoreTypography}
+                              onClick={() => navigateTo(entity)}
                             >
-                              {entity.totalTests}
+                              ...View More
                             </Typography>
                           </Box>
                         )}
-                      {currentEntity && currentEntity.type === "exam" && (
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "flex-end", // Align to the right
-                            marginTop: "-30px",
-                          }}
-                        >
-                          <Typography
-                            variant="button"
-                            component="span"
-                            sx={{
-                              textTransform: "none",
-                              fontWeight: "600",
-                              borderRadius: "8px",
-                              textAlign: "right",
-                              color: COLORS.primary,
-                              cursor: "pointer",
-                            }}
-                            onClick={() => navigateTo(entity)}
-                          >
-                            ...View More
-                          </Typography>
-                        </Box>
-                      )}
-
-                      <Box>
-                        {currentEntity && currentEntity.type === "exam" && (
-                          <Box sx={{ mt: 2 }}>
-                            {/* Out of line and Percentage inline */}
+                        {/* totalTests */}
+                        {!(currentEntity && currentEntity.type === "exam") &&
+                          entity.totalTests && (
                             <Box
                               sx={{
                                 display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                mb: 1, // Space between the line and progress bar
+                                gap: 1,
+                                marginTop: "-30px",
                               }}
                             >
-                              <Box
-                                sx={{ display: "flex", alignItems: "center" }}
+                              <Typography
+                                variant="body1"
+                                sx={{
+                                  color: COLORS.black,
+                                  fontWeight: 600,
+                                  whiteSpace: "nowrap", // Prevent text from wrapping to the next line
+                                  overflow: "hidden", // Hide overflowed text
+                                  textOverflow: "ellipsis", // Show ellipsis when text overflows
+                                  width: "100%", // Default width to take full space
+                                  // Apply 40px width and ellipsis on small screens only
+                                  "@media (max-width: 820px)": {
+                                    width: "180px", // Set the width to 40px for small screens
+                                  },
+                                  "@media (max-width: 770px)": {
+                                    width: "160px", // Set the width to 40px for small screens
+                                  },
+                                  "@media (max-width: 700px)": {
+                                    width: "140px", // Set the width to 40px for small screens
+                                  },
+                                }}
                               >
-                                <Typography
-                                  variant="h4"
-                                  sx={STYLES.completedTestsTypography}
+                                {entity.totalTests}
+                              </Typography>
+                            </Box>
+                          )}
+                        {currentEntity && currentEntity.type === "exam" && (
+                          <Box
+                            sx={{
+                              display: "flex",
+                              justifyContent: "flex-end", // Align to the right
+                              marginTop: "-30px",
+                            }}
+                          >
+                            <Typography
+                              variant="button"
+                              component="span"
+                              sx={{
+                                textTransform: "none",
+                                fontWeight: "600",
+                                borderRadius: "8px",
+                                textAlign: "right",
+                                color: COLORS.primary,
+                                cursor: "pointer",
+                              }}
+                              onClick={() => navigateTo(entity)}
+                            >
+                              ...View More
+                            </Typography>
+                          </Box>
+                        )}
+
+                        <Box>
+                          {currentEntity && currentEntity.type === "exam" && (
+                            <Box sx={{ mt: 2 }}>
+                              {/* Out of line and Percentage inline */}
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  alignItems: "center",
+                                  mb: 1, // Space between the line and progress bar
+                                }}
+                              >
+                                <Box
+                                  sx={{ display: "flex", alignItems: "center" }}
                                 >
-                                  {/* Total completed tests */}
+                                  <Typography
+                                    variant="h4"
+                                    sx={STYLES.completedTestsTypography}
+                                  >
+                                    {/* Total completed tests */}
+                                    {entity.children
+                                      ? entity.children.reduce(
+                                          (completed, subject) =>
+                                            completed +
+                                            (subject.children
+                                              ? subject.children.filter(
+                                                  (test) =>
+                                                    testCompleted[test.testName]
+                                                ).length
+                                              : 0),
+                                          0
+                                        )
+                                      : "0"}
+                                  </Typography>
+                                  <Typography
+                                    variant="h4"
+                                    sx={{
+                                      color: COLORS.black,
+                                      fontWeight: "bold",
+                                      mx: 1,
+                                    }} // margin between the text
+                                  >
+                                    out of
+                                  </Typography>
+                                  <Typography
+                                    variant="h4"
+                                    sx={STYLES.totalTestsTypography}
+                                  >
+                                    {/* Total tests */}
+                                    {entity.children
+                                      ? entity.children.reduce(
+                                          (total, subject) =>
+                                            total +
+                                            (subject.children
+                                              ? subject.children.length
+                                              : 0),
+                                          0
+                                        )
+                                      : "0"}{" "}
+                                    Tests
+                                  </Typography>
+                                </Box>
+
+                                <Typography
+                                  variant="h5"
+                                  sx={STYLES.percentageTypography}
+                                >
+                                  {/* Calculate percentage */}
                                   {entity.children
-                                    ? entity.children.reduce(
-                                        (completed, subject) =>
-                                          completed +
-                                          (subject.children
-                                            ? subject.children.filter(
-                                                (test) =>
-                                                  testCompleted[test.testName]
-                                              ).length
-                                            : 0),
-                                        0
+                                    ? Math.round(
+                                        (entity.children.reduce(
+                                          (completed, subject) =>
+                                            completed +
+                                            (subject.children
+                                              ? subject.children.filter(
+                                                  (test) =>
+                                                    testCompleted[test.testName]
+                                                ).length
+                                              : 0),
+                                          0
+                                        ) /
+                                          entity.children.reduce(
+                                            (total, subject) =>
+                                              total +
+                                              (subject.children
+                                                ? subject.children.length
+                                                : 0),
+                                            0
+                                          )) *
+                                          100
                                       )
-                                    : "0"}
-                                </Typography>
-                                <Typography
-                                  variant="h4"
-                                  sx={{
-                                    color: COLORS.black,
-                                    fontWeight: "bold",
-                                    mx: 1,
-                                  }} // margin between the text
-                                >
-                                  out of
-                                </Typography>
-                                <Typography
-                                  variant="h4"
-                                  sx={STYLES.totalTestsTypography}
-                                >
-                                  {/* Total tests */}
-                                  {entity.children
-                                    ? entity.children.reduce(
-                                        (total, subject) =>
-                                          total +
-                                          (subject.children
-                                            ? subject.children.length
-                                            : 0),
-                                        0
-                                      )
-                                    : "0"}{" "}
-                                  Tests
+                                    : 0}
+                                  %
                                 </Typography>
                               </Box>
 
-                              <Typography
-                                variant="h5"
-                                sx={STYLES.percentageTypography}
-                              >
-                                {/* Calculate percentage */}
-                                {entity.children
-                                  ? Math.round(
-                                      (entity.children.reduce(
+                              {/* Progress Bar */}
+                              <LinearProgress
+                                variant="determinate"
+                                value={
+                                  entity.children
+                                    ? (entity.children.reduce(
                                         (completed, subject) =>
                                           completed +
                                           (subject.children
@@ -1349,149 +1392,123 @@ WebkitTextFillColor: "transparent",
                                               : 0),
                                           0
                                         )) *
-                                        100
-                                    )
-                                  : 0}
-                                %
-                              </Typography>
+                                      100
+                                    : 0
+                                }
+                                sx={STYLES.linearProgress}
+                              />
                             </Box>
-
-                            {/* Progress Bar */}
-                            <LinearProgress
-                              variant="determinate"
-                              value={
-                                entity.children
-                                  ? (entity.children.reduce(
-                                      (completed, subject) =>
-                                        completed +
-                                        (subject.children
-                                          ? subject.children.filter(
-                                              (test) =>
-                                                testCompleted[test.testName]
-                                            ).length
-                                          : 0),
-                                      0
-                                    ) /
-                                      entity.children.reduce(
-                                        (total, subject) =>
-                                          total +
-                                          (subject.children
-                                            ? subject.children.length
-                                            : 0),
-                                        0
-                                      )) *
-                                    100
-                                  : 0
-                              }
-                              sx={STYLES.linearProgress}
-                            />
-                          </Box>
-                        )}
+                          )}
+                        </Box>
                       </Box>
-                    </Box>
-                  )}
+                    )}
 
-                {/* description for topics */}
-                {currentEntity &&
-                  (currentEntity.type === "subject" ||
-                    currentEntity.type === "exam") &&
-                  entity.description && (
+                  {/* description for topics */}
+                  {currentEntity &&
+                    (currentEntity.type === "subject" ||
+                      currentEntity.type === "exam") &&
+                    entity.description && (
+                      <Box sx={{ mt: 2 }}>
+                        <Typography
+                          variant="body1"
+                          sx={STYLES.descriptionTypography}
+                        >
+                          {entity.description}
+                        </Typography>
+                      </Box>
+                    )}
+
+                  {/* Completed and Total Tests for topics */}
+                  {currentEntity && currentEntity.type === "subject" && (
                     <Box sx={{ mt: 2 }}>
-                      <Typography
-                        variant="body1"
-                        sx={STYLES.descriptionTypography}
-                      >
-                        {entity.description}
-                      </Typography>
-                    </Box>
-                  )}
-
-                {/* Completed and Total Tests for topics */}
-                {currentEntity && currentEntity.type === "subject" && (
-                  <Box sx={{ mt: 2 }}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        // Adjust gap as needed
-                        mb: 1, // Margin for spacing between the inline elements and progress bar
-                      }}
-                    >
                       <Box
-                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          // Adjust gap as needed
+                          mb: 1, // Margin for spacing between the inline elements and progress bar
+                        }}
                       >
-                        <Typography
-                          variant="h4"
-                          sx={STYLES.completedTestsTypography}
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
                         >
+                          <Typography
+                            variant="h4"
+                            sx={STYLES.completedTestsTypography}
+                          >
+                            {entity.children
+                              ? entity.children.filter(
+                                  (paper) =>
+                                    testCompleted[paper.testName] === true
+                                ).length
+                              : 0}
+                          </Typography>{" "}
+                          out of{" "}
+                          <Typography
+                            variant="h4"
+                            sx={STYLES.totalTestsTypography}
+                          >
+                            {entity.children ? entity.children.length : "0"}{" "}
+                            Tests
+                          </Typography>
+                        </Box>
+
+                        <Typography
+                          variant="h5"
+                          sx={STYLES.percentageTypography}
+                        >
+                          {/* Percentage */}
                           {entity.children
-                            ? entity.children.filter(
-                                (paper) =>
-                                  testCompleted[paper.testName] === true
-                              ).length
-                            : 0}
-                        </Typography>{" "}
-                        out of{" "}
-                        <Typography
-                          variant="h4"
-                          sx={STYLES.totalTestsTypography}
-                        >
-                          {entity.children ? entity.children.length : "0"} Tests
+                            ? `${Math.round(
+                                (entity.children.filter(
+                                  (paper) =>
+                                    testCompleted[paper.testName] === true
+                                ).length /
+                                  entity.children.length) *
+                                  100
+                              )}%`
+                            : "0%"}
                         </Typography>
                       </Box>
 
-                      <Typography variant="h5" sx={STYLES.percentageTypography}>
-                        {/* Percentage */}
-                        {entity.children
-                          ? `${Math.round(
-                              (entity.children.filter(
+                      {/* Progress Bar */}
+                      <LinearProgress
+                        variant="determinate"
+                        value={
+                          entity.children
+                            ? (entity.children.filter(
                                 (paper) =>
                                   testCompleted[paper.testName] === true
                               ).length /
                                 entity.children.length) *
-                                100
-                            )}%`
-                          : "0%"}
-                      </Typography>
+                              100
+                            : 0
+                        }
+                        sx={STYLES.linearProgress}
+                      />
                     </Box>
-
-                    {/* Progress Bar */}
-                    <LinearProgress
-                      variant="determinate"
-                      value={
-                        entity.children
-                          ? (entity.children.filter(
-                              (paper) => testCompleted[paper.testName] === true
-                            ).length /
-                              entity.children.length) *
-                            100
-                          : 0
-                      }
-                      sx={STYLES.linearProgress}
-                    />
-                  </Box>
-                )}
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      )}
-      {/* Snackbar for notifications */}
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000} // Auto-hide after 6 seconds
-        onClose={() => setSnackbarOpen(false)}
-      >
-        <Alert
+                  )}
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        )}
+        {/* Snackbar for notifications */}
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={6000} // Auto-hide after 6 seconds
           onClose={() => setSnackbarOpen(false)}
-          severity={snackbarSeverity}
-          sx={{ width: "100%" }}
         >
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
-    </Box>
+          <Alert
+            onClose={() => setSnackbarOpen(false)}
+            severity={snackbarSeverity}
+            sx={{ width: "100%" }}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
+      </Box>
     </Grid>
   );
 };

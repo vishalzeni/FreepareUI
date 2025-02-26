@@ -249,7 +249,7 @@ const Admin = () => {
                           align="center"
                           sx={{
                             color: "#066C98",
-                            fontWeight: "300",
+                            fontWeight: "400",
                             fontSize: "1.6rem",
                             mt: 1,
                           }}

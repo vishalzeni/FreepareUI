@@ -62,6 +62,8 @@ export const STYLES = {
     },
   },
   iconButton: {
+    width: "60px",
+    height: "60px",
     position: "fixed",
     top: "80px",
     left: "20px",
@@ -127,25 +129,25 @@ export const STYLES = {
   },
   viewMoreTypography: {
     textTransform: "none",
-    fontWeight: 500, 
-    fontSize: "14px", 
-    borderRadius: "10px", 
+    fontWeight: 500,
+    fontSize: "14px",
+    borderRadius: "5px",
     textAlign: "right",
     color: COLORS.primary,
     cursor: "pointer",
-    padding: "8px 18px",
+    padding: "6px 15px",
     boxShadow: "none",
     border: `1px solid ${COLORS.primary}`,
-    transition: "all 0.3s ease-in-out", 
-  
+    transition: "all 0.3s ease-in-out",
+
     "&:hover": {
       backgroundColor: COLORS.primary,
       color: COLORS.white,
-      transform: "scale(1.06)", 
+      transform: "scale(1.06)",
       boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
     },
   },
-  
+
   descriptionTypography: {
     color: COLORS.black,
     display: "-webkit-box",

@@ -512,7 +512,7 @@ const TestPage = () => {
                                               }
                                           }}
                                           style={{
-                                            maxWidth: "80px", // Max size limit
+                                            maxWidth: "100px", // Max size limit
                                             objectFit: "contain",
                                           }}
                                         />

@@ -1,6 +1,7 @@
 {
   "short_name": "MyReactApp",
   "name": "My React Application",
+  "description": "A React application using Material-UI.",
   "icons": [
     {
       "src": "/icon-192x192.png",
@@ -13,9 +14,11 @@
       "type": "image/png"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "theme_color": "#1976d2",
   "background_color": "#ffffff",
-  "description": "A React application using Material-UI."
+  "prefer_related_applications": false
 }

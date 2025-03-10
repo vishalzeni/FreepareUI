@@ -18,6 +18,8 @@ import PasswordStrengthBar from "react-password-strength-bar";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import img from "../../Assets/Freepare_LogIn.png";
 
+const BASE_URL = "https://freepare.onrender.com";
+
 const AuthForm = ({ type }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -103,7 +105,7 @@ const AuthForm = ({ type }) => {
     };
 
     try {
-      const response = await fetch(`https://freepare.onrender.com/${type}`, {
+      const response = await fetch(`${BASE_URL}/${type}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

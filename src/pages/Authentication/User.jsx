@@ -26,6 +26,8 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import AvatarIcon from "@mui/icons-material/AccountCircle";
 import AdditionalInfoDialog from "./AdditionalInfoDialog";
 
+const BASE_URL = "https://freepare.onrender.com";
+
 const User = ({ open, onClose, onUpdateImage }) => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -75,7 +77,7 @@ const User = ({ open, onClose, onUpdateImage }) => {
           return;
         }
 
-        const response = await fetch(`https://freepare.onrender.com/users/${userId}`, {
+        const response = await fetch(`${BASE_URL}/users/${userId}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -114,7 +116,7 @@ const User = ({ open, onClose, onUpdateImage }) => {
       }
 
       const response = await fetch(
-        "https://freepare.onrender.com/users/update-avatar",
+        `${BASE_URL}/users/update-avatar`,
         {
           method: "PUT",
           headers: {
@@ -201,7 +203,7 @@ const User = ({ open, onClose, onUpdateImage }) => {
         userId: userId, // Add userId here
       };
 
-      const response = await fetch("https://freepare.onrender.com/users/add-info", {
+      const response = await fetch(`${BASE_URL}/users/add-info`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -266,7 +268,7 @@ const User = ({ open, onClose, onUpdateImage }) => {
         userId: userId, // Add userId here
       };
 
-      const response = await fetch("https://freepare.onrender.com/users/update", {
+      const response = await fetch(`${BASE_URL}/users/update`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

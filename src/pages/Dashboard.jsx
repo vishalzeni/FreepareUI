@@ -34,6 +34,8 @@ import axios from "axios";
 import { debounce } from "lodash";
 import CircularProgress from "@mui/material/CircularProgress";
 
+const BASE_URL = "https://freepare.onrender.com";
+
 const Dashboard = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -57,7 +59,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchUsers = async (retries = 3) => {
       try {
-        const response = await axios.get("https://freepare.onrender.com/users-data");
+        const response = await axios.get(`${BASE_URL}/users-data`);
         setUsers(response.data);
         setLoading(false);
       } catch (err) {
@@ -170,7 +172,7 @@ const Dashboard = () => {
   const handleDeleteConfirm = useCallback(() => {
     if (nameInput === userToDelete.firstName) {
       // Make an API call to delete the user using _id
-      axios.delete(`https://freepare.onrender.com/users-data/${userToDelete._id}`)
+      axios.delete(`${BASE_URL}/users-data/${userToDelete._id}`)
         .then((response) => {
           // Update the users list after successful deletion
           setUsers(users.filter((user) => user._id !== userToDelete._id));

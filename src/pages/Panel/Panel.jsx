@@ -106,6 +106,8 @@ const Panel = () => {
   const [loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
   const [isReordering, setIsReordering] = useState(false);
+  const [editingTestName, setEditingTestName] = useState(null);
+  const [newTestName, setNewTestName] = useState("");
 
   // Dialog and Snackbar States
   const [dialogState, setDialogState] = useState({
@@ -198,16 +200,6 @@ const Panel = () => {
       videoLink: "",
     });
     setEditingEntity(null);
-  };
-  const invalidChars = /[^a-zA-Z0-9\s&/]/;
-
-  const isValidUrl = (url) => {
-    try {
-      new URL(url);
-      return true;
-    } catch {
-      return false;
-    }
   };
 
   const validateForm = () => {
@@ -359,6 +351,31 @@ const Panel = () => {
     [editingName, showSnackbar]
   );
 
+  const renameTestName = async (entityId, newTestName) => {
+    try {
+      const response = await axios.put(`${BASE_URL}/entities/${entityId}/renameTestName`, {
+        testName: newTestName,
+      });
+
+      const updateInHierarchy = (items) =>
+        items.map((item) =>
+          item._id === entityId
+            ? { ...item, ...response.data }
+            : { ...item, children: updateInHierarchy(item.children) }
+        );
+
+      setData(updateInHierarchy(data));
+      showSnackbar(`Test name updated successfully to "${newTestName}"`, "success");
+    } catch (error) {
+      const message =
+        error.response?.data?.message ||
+        (error.message.includes("Network Error")
+          ? "Network Error - Check Internet Connection"
+          : "Server Error - Please Try Again Later");
+      showSnackbar(message, "error");
+    }
+  };
+
   const undoDelete = async () => {
     if (!undoState.entity) return;
 
@@ -493,6 +510,18 @@ const Panel = () => {
     });
   }, []);
 
+  const handleTestNameDoubleClick = (entity) => {
+    setEditingTestName(entity._id);
+    setNewTestName(entity.testName);
+  };
+
+  const handleTestNameBlur = (entity) => {
+    if (newTestName.trim() && newTestName !== entity.testName) {
+      renameTestName(entity._id, newTestName);
+    }
+    setEditingTestName(null);
+  };
+
   // Wrap these handlers in useCallback to prevent unnecessary re-renders
   const handleEntityClick = useCallback((entity) => {
     setSelectedEntity((prev) => (prev === entity ? null : entity));
@@ -625,11 +654,30 @@ const Panel = () => {
                 </Typography>
               </Box>
             )}
-            {entity.type === "paper" && entity.testName && (
+            {entity.type === "paper" && (
               <Box sx={styles.entityDescription}>
-                <Typography variant="body2" color="textSecondary">
-                  <strong>Test Name -</strong> {entity.testName}
-                </Typography>
+                {editingTestName === entity._id ? (
+                  <TextField
+                    value={newTestName}
+                    onChange={(e) => setNewTestName(e.target.value)}
+                    onBlur={() => handleTestNameBlur(entity)}
+                    onKeyDown={(e) =>
+                      e.key === "Enter" && handleTestNameBlur(entity)
+                    }
+                    autoFocus
+                    fullWidth
+                    aria-label={`Edit test name for ${entity.name}`}
+                  />
+                ) : (
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    onDoubleClick={() => handleTestNameDoubleClick(entity)}
+                    aria-label={`Test name for ${entity.name}`}
+                  >
+                    <strong>Test Name -</strong> {entity.testName}
+                  </Typography>
+                )}
               </Box>
             )}
           </Box>
@@ -658,8 +706,12 @@ const Panel = () => {
       selectedEntity,
       editingEntity,
       editingName,
+      editingTestName,
+      newTestName,
       handleEntityClick,
       handleEditClick,
+      handleTestNameDoubleClick,
+      handleTestNameBlur,
       updateEntity,
     ]
   );

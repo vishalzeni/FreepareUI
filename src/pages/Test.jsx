@@ -17,6 +17,7 @@ import {
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts"; // Pie chart
 import Navbar from "../components/Navbar";
 import SessionExpireDialog from "../SessionExpireCheck/SessionExpireDialog";
+import DisableCopy from "../Disable/DisableCopy";
 
 const useFetchExamData = (examId) => {
   const [examData, setExamData] = useState(null);
@@ -171,6 +172,7 @@ const TestPage = () => {
 
   return (
     <>
+    <DisableCopy/>
       <Navbar />
       <Box
         sx={{
@@ -502,9 +504,15 @@ const TestPage = () => {
                                         <img
                                           src={question[`option${option}Image`]}
                                           alt={`Option ${option}`}
+                                          
+                                          onLoad={(e) => {
+                                            const img = e.target;
+                                            if (img.naturalWidth > 50 || img.naturalHeight > 50) {
+                                              img.style.width = `${Math.max(img.naturalWidth, 50)}px`;
+                                              }
+                                          }}
                                           style={{
-                                            width: "50px",
-                                            height: "50px",
+                                            maxWidth: "80px", // Max size limit
                                             objectFit: "contain",
                                           }}
                                         />

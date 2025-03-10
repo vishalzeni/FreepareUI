@@ -997,10 +997,6 @@ const Hierarchy = () => {
                                                               `option${option}Image`
                                                             ] && (
                                                               <Box
-                                                                sx={{
-                                                                  marginLeft:
-                                                                    "10px",
-                                                                }}
                                                               >
                                                                 <img
                                                                   src={
@@ -1009,13 +1005,15 @@ const Hierarchy = () => {
                                                                     ]
                                                                   }
                                                                   alt={`Option ${option}`}
+                                                                  onLoad={(e) => {
+                                                                    const img = e.target;
+                                                                    if (img.naturalWidth > 50 || img.naturalHeight > 50) {
+                                                                      img.style.width = `${Math.max(img.naturalWidth, 50)}px`;
+                                                                      }
+                                                                  }}
                                                                   style={{
-                                                                    width:
-                                                                      "40px",
-                                                                    height:
-                                                                      "40px",
-                                                                    objectFit:
-                                                                      "cover",
+                                                                    maxWidth: "80px", // Max size limit
+                                                                    objectFit: "contain",
                                                                   }}
                                                                 />
                                                               </Box>
